@@ -1,0 +1,209 @@
+# toolbox.py - various functions for the spliced alignment bakeoff project
+
+import gzip
+import re
+
+###########
+# General #
+###########
+
+COMPLEMENT = str.maketrans('ACGTRYMKWSBDHV', 'TGCAYRKMWSVHDB')
+
+def anti(dna):
+	"""reverse-complements a string"""
+	return dna.translate(COMPLEMENT)[::-1]
+
+def getfp(filename):
+	"""creates file pointers based on file name"""
+	fp = None
+	if   filename.endswith('.gz'): fp = gzip.open(filename, 'rt')
+	elif filename == '-':          fp = sys.stdin
+	else:                          fp = open(filename)
+	return fp
+
+#############
+# FTX Files #
+#############
+
+class FTX:
+	"""Class to represent transcripts with one-line formatting"""
+
+	def __init__(self, chrom, name, strand, exons, info):
+		# sanity checks
+		assert('|' not in chrom)
+		assert(' ' not in chrom)
+		assert('|' not in name)
+		assert(' ' not in name)
+		assert(strand == '+' or strand == '-')
+		for beg, end in exons: assert(beg <= end)
+		for i in range(len(exons) -1): assert(exons[i][0] < exons[i+1][0])
+
+		self.chrom = chrom
+		self.beg = exons[0][0]
+		self.end = exons[-1][1]
+		self.name = name
+		self.strand = strand
+		self.exons = exons
+		self.info = info
+
+	def exon_length(self, n):
+		"""retrieves the exon length of an enumerated exon"""
+		return self.exons[n][1] - self.exons[n][0] + 1
+
+	def exons_match(f1, f2):
+		"""tests if all of exons are identical"""
+		for (b1, e1), (b2, e2) in zip(f1.exons, f2.exons):
+			if b1 != b2: return False
+			if e1 != e2: return False
+		return True
+
+	def overlaps(f1, f2, strand_sensitive=True):
+		"""tests if two ftx objects overlap each other"""
+		if f1.chrom != f2.chrom: return False
+		if f1.strand != f2.strand and strand_sensitive: return False
+		if f1.beg <= f2.beg and f1.end >= f2.beg: return True
+		return False
+
+	def compare_introns(f1, f2):
+		"""gives a core of +1 for each shared intron end-point"""
+		f1dons = [end for beg, end in f1.exons[:-1]]
+		f1accs = [beg for beg, end in f1.exons[1:]]
+		score = 0
+		for beg, end in f2.exons[:-1]:
+			if end in f1dons: score += 1
+		for beg, end in f2.exons[1:]:
+			if beg in f1accs: score += 1
+		return score
+
+	def compare_exons(f1, f2):
+		"""gives a score of +1 for each shared exon end-point"""
+		f1b = [beg for beg, end in f1.exons]
+		f1e = [end for beg, end in f1.exons]
+		f2b = [beg for beg, end in f2.exons]
+		f2e = [end for beg, end in f2.exons]
+		total = len(f1b) + len(f1e)
+		shared = 0
+		for beg in f1b:
+			if beg in f2b: shared += 1
+		for end in f1e:
+			if end in f2e: shared += 1
+		return shared, total
+
+	def text(self):
+		"""text-based version of ftx, 1-based"""
+		estr = ','.join([f'{beg+1}-{end+1}' for beg, end in self.exons])
+		return '|'.join((self.chrom, self.name, self.strand, estr, self.info))
+
+	def __str__(self):
+		"""the preferred way to print ftx is just to print it"""
+		return self.text()
+
+	@classmethod
+	def parse(self, text):
+		"""returns ftx object from a string"""
+		chrom, name, strand, estr, info = text.split('|')
+		exons = []
+		for s in estr.split(','):
+			beg, end = s.split('-')
+			exons.append((int(beg)-1, int(end)-1))
+		return FTX(chrom, name, strand, exons, info)
+
+###########
+# Genomes #
+###########
+
+def readfasta(filename):
+	"""generates defline, seq from fasta files"""
+	name = None
+	seqs = []
+	fp = getfp(filename)
+	while True:
+		line = fp.readline()
+		if line == '': break
+		line = line.rstrip()
+		if line.startswith('>'):
+			if len(seqs) > 0:
+				seq = ''.join(seqs)
+				yield(name, seq)
+				name = line[1:]
+				seqs = []
+			else:
+				name = line[1:]
+		else:
+			seqs.append(line)
+	yield(name, ''.join(seqs))
+	fp.close()
+
+def generator(fastafile, ftxfile):
+	"""generates name, seq, ftx-genes from fasta and ftx files"""
+	ftx_table = {}
+	fp = getfp(ftxfile)
+	for line in fp:
+		ftx = FTX.parse(line.rstrip())
+		if ftx.chrom not in ftx_table: ftx_table[ftx.chrom] = []
+		ftx_table[ftx.chrom].append(ftx)
+	for defline, seq in readfasta(fastafile):
+		chrom = defline.split()[0]
+		if chrom in ftx_table: yield chrom, seq, ftx_table[chrom]
+
+#############
+# SAM Files #
+#############
+
+class SAMbitflag:
+	"""class for sam bitflags"""
+	def __init__(self, val):
+		i = int(val)
+		b = f'{i:012b}'
+		self.read_unmapped = True if b[-3] == '1' else False
+		self.read_reverse_strand = True if b[-5] == '1' else False
+		self.not_primary_alignment = True if b[-9] == '1' else False
+		self.supplementary_alignment = True if b[-12] == '1' else False
+		self.otherflags = []
+		for i in (1, 2, 4, 6, 7, 8, 10, 11):
+			if b[-i] == '1': self.otherflags.append(i)
+
+def cigar_to_exons(cigar, pos):
+	"""converts cigar strings to exon coorinates"""
+	exons = []
+	beg = 0
+	end = 0
+	for match in re.finditer(r'(\d+)([A-Z])', cigar):
+		n = int(match.group(1))
+		op = match.group(2)
+		if   op == 'M': end += n
+		elif op == 'D': pass
+		elif op == 'I': end += n
+		#elif op == 'S': beg += n # is this right?
+		#elif op == 'H': pass
+		elif op == 'N':
+			exons.append((pos+beg-1, pos+end-2))
+			beg = end + n
+			end = beg
+	exons.append((pos+beg-1, pos+end-2))
+	return exons
+
+def sam_to_ftx(filename, info=None):
+	"""generates ftx objects from sam file"""
+	n = 0
+	with open(filename) as fp:
+		for line in fp:
+			if line == '': break
+			if line.startswith('@'): continue
+			f = line.split('\t')
+			qname = f[0]
+			bf = SAMbitflag(f[1])
+			chrom = f[2]
+			pos   = int(f[3])
+			cigar = f[5]
+
+			st = '-' if bf.read_reverse_strand else '+'
+			if bf.read_unmapped: continue
+			if bf.not_primary_alignment: continue
+			if bf.supplementary_alignment: continue
+			if bf.otherflags:
+				print(bf.otherflags)
+				sys.exit('unexpected flags found, debug me')
+			n += 1
+			exons = cigar_to_exons(cigar, pos)
+			yield FTX(chrom, str(n), st, exons, f'{info}~{qname}')

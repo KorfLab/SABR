@@ -75,27 +75,48 @@ by each program by searching for the word `BAKETIME`.
 grep BAKETIME log.txt
 ```
 
-## Checksum ##
+## Testing ##
 
 Alignment software changes from time to time, so the results of a bakeoff might
 also change.
 
-The Version below is what is reported in conda, not what the program reports
-(they may be different).
+Some algorithms may produce alignments in different orders when the number of
+processors is changed. This causes a difference in the checksum but not the
+actual alignments. As of this writing, `gmap` has this behavior. When testing,
+use a single processor (the `bakeoff` default). Later, you may want to reduce
+elapsed time with `-p4` for 4 processors (threads).
+
+The Version below is what is reported in conda, not what the program reports.
+They may be different, for example in `magicblast`.
+
+When you run `md5sum`, make sure you run it via stdin because files that have
+been gzipped may contain metadata that artificially makes the contents of two
+gzipped files look different.
+
+```
+gunzip -c build/pblat.ftx.gz | md5sum
+```
+
+With all of those caveats in place, here are the checksums for the various
+programs run with `bakeoff -ts1 data/ce* ...`
 
 | Program    | Version    | MD5
-|:-----------|:-----------|:-------------------
-| blat       | 35         | 7d14fe138c93538fa354dc81b2b1b125
-| bowtie2    | 2.2.5      | 82d428ce9cecf1ba3faea029fd0923d8
-| bwa-mem    | 0.7.18     | 9952d6a30fecb6151c01cd59b902d672
-| gmap       | 2024.11.20 | 20ecbd6afa9a6227f3f8ba229cab20bb
-| hisat2     | 2.2.0      | 62588c97be1ed5121c3e259712215962
-| magicblast | 1.7.0      | ad94bf29e78591751c0fbd6bc6daf3c7
-| minimap2   | 2.28       | 30eb4fcd04c987aa06a9f3f4a48b30e9
-| pblat      | 2.5.1      | 7e890564345bba227357b21d805c1dc0
-| star       | 2.7.11a    | 3716011e070c9c1af6608862572ec2d9
-| tophat2    | 2.1.1      | 4e96a43671af9e3472c2aec83643c223
+|:-----------|:-----------|:--------------------------------
+| blat       | 35         |
+| bowtie2    | 2.2.5      |
+| bwa-mem    | 0.7.18     |
+| gmap       | 2024.11.20 |
+| hisat2     | 2.2.0      |
+| magicblast | 1.7.0      |
+| minimap2   | 2.28       |
+| pblat      | 2.5.1      |
+| star       | 2.7.11a    |
+| tophat2    | 2.1.1      |
 
 ## Alignment comparisons ##
 
-Unfinished
+Alignment comparison procedures and their documentation are unfinished.
+
+```
+python3 compare-alignments.py build/*.ftx.gz --basename test
+```

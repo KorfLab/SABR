@@ -26,7 +26,7 @@ def getfp(filename):
 #############
 
 class FTX:
-	"""Class to represent transcripts with one-line formatting"""
+	"""class to represent transcripts with one-line formatting"""
 
 	def __init__(self, chrom, name, strand, exons, info):
 		# sanity checks
@@ -50,13 +50,6 @@ class FTX:
 		"""retrieves the exon length of an enumerated exon"""
 		return self.exons[n][1] - self.exons[n][0] + 1
 
-	def exons_match(f1, f2):
-		"""tests if all of exons are identical"""
-		for (b1, e1), (b2, e2) in zip(f1.exons, f2.exons):
-			if b1 != b2: return False
-			if e1 != e2: return False
-		return True
-
 	def overlaps(f1, f2, strand_sensitive=True):
 		"""tests if two ftx objects overlap each other"""
 		if f1.chrom != f2.chrom: return False
@@ -64,19 +57,33 @@ class FTX:
 		if f1.beg <= f2.beg and f1.end >= f2.beg: return True
 		return False
 
-	def compare_introns(f1, f2):
-		"""gives a core of +1 for each shared intron end-point"""
-		f1dons = [end for beg, end in f1.exons[:-1]]
-		f1accs = [beg for beg, end in f1.exons[1:]]
-		score = 0
-		for beg, end in f2.exons[:-1]:
-			if end in f1dons: score += 1
-		for beg, end in f2.exons[1:]:
-			if beg in f1accs: score += 1
-		return score
+	def matches(f1, f2):
+		"""true if all exons are identical"""
+		for (b1, e1), (b2, e2) in zip(f1.exons, f2.exons):
+			if b1 != b2: return False
+			if e1 != e2: return False
+		return True
 
-	def compare_exons(f1, f2):
-		"""gives a score of +1 for each shared exon end-point"""
+	def similar(f1, f2):
+		if f1.overlaps(f2) and f1.distance(f2) <= 0.5: return True
+		return False
+
+	def distance(f1, f2):
+		"""distance (0-1) between 2 ftx objects where 0 is identity"""
+
+		# check for identity, zero distance
+		if len(f1.exons) == len(f2.exons):
+			identical = True
+			for (b1, e1), (b2, e2) in zip(f1.exons, f2.exons):
+				if b1 != b2:
+					identical = False
+					break
+				if e1 != e2:
+					identical = False
+					break
+			if identical: return 0
+
+		# examine shared coordinates, non-zero distance
 		f1b = [beg for beg, end in f1.exons]
 		f1e = [end for beg, end in f1.exons]
 		f2b = [beg for beg, end in f2.exons]
@@ -87,7 +94,8 @@ class FTX:
 			if beg in f2b: shared += 1
 		for end in f1e:
 			if end in f2e: shared += 1
-		return shared, total
+
+		return (total - shared) / total
 
 	def text(self):
 		"""text-based version of ftx, 1-based"""
@@ -101,7 +109,7 @@ class FTX:
 	@classmethod
 	def parse(self, text):
 		"""returns ftx object from a string"""
-		chrom, name, strand, estr, info = text.split('|')
+		chrom, name, strand, estr, info = text.split('|', 4)
 		exons = []
 		for s in estr.split(','):
 			beg, end = s.split('-')
@@ -199,8 +207,6 @@ def sam_to_ftx(filename, info=None):
 
 			st = '-' if bf.read_reverse_strand else '+'
 			if bf.read_unmapped: continue
-			if bf.not_primary_alignment: continue
-			if bf.supplementary_alignment: continue
 			if bf.otherflags:
 				print(bf.otherflags)
 				sys.exit('unexpected flags found, debug me')

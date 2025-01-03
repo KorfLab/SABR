@@ -73,8 +73,9 @@ Example: Minus-strand transcript with some extra info.
 chr2|gene-2|-|100-200,300-400,500-600|extra free text
 ```
 
-Example: The information field can contain another ftx. This is used within the
-bakeoff to attach an alignment to its original genomoic source.
+Example: The information field can contain another ftx. A `~` is used to show
+the 2nd ftx. This is used within the bakeoff to attach a genomic source to all
+of its alignments (an aligner may provide more than one alignment).
 
 ```
 chr1|gene-1|+|100-200,300-400,500-600|~chr1|gene-1|+|100-200,300-400,500-600|
@@ -82,7 +83,7 @@ chr1|gene-1|+|100-200,300-400,500-600|~chr1|gene-1|+|100-200,300-400,500-600|
 
 ## TO DO ##
 
-
+- check all mis-alignments for sam issues
 - real genomes
 	- have masking, what to do about that?
 	- what about a large genome?

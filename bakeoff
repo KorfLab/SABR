@@ -3,8 +3,8 @@
 use strict;
 use warnings;
 use Getopt::Std;
-our ($opt_f, $opt_p, $opt_s, $opt_t, $opt_x);
-getopts('fp:s:tx');
+our ($opt_d, $opt_f, $opt_p, $opt_s, $opt_t, $opt_x);
+getopts('dfp:s:tx');
 
 sub run {
 	my $cli = shift;
@@ -22,6 +22,7 @@ options:
   -s <int>  random seed [unset]
   -t        testing mode (data reduction via sampling)
   -f        force overwrite
+  -d        pass debugging flag to alinger
   -x        experimental genome (not real)
 
 DNA: path to FASTA file of reference sequence
@@ -64,6 +65,7 @@ chdir $dir;
 foreach my $prog (@program) {
 	my $cli = "python3 ../run-aligner.py $dna $rna $prog ";
 	$cli .= " --threads $opt_p" if $opt_p;
+	$cli .= " --debug" if $opt_d;
 	run($cli) if not -s "$prog.ftx.gz" or $opt_f;
 }
 

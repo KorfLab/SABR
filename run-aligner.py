@@ -176,7 +176,7 @@ with open(ftx) as fp:
 	for line in fp:
 		ali, ref = line.rstrip().split('~')
 		if ref not in aligned: aligned[ref] = ali
-		# keeping only first match, assuming it's the best one
+		else: aligned[ref] += '~' + ali # chaining extra alignments
 
 with gzip.open(f'{arg.program}.ftx.gz', 'wt') as fp:
 	for ref in refs:

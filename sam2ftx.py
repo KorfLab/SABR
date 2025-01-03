@@ -20,8 +20,8 @@ for ftx in sam_to_ftx(arg.sam, info=arg.info): print(ftx, file=fp)
 
 """
 
-This program is only intended for the rare circumstances when a program cannot
-be run inside the bakeoff wrapper. An example is "dragen", which is FPGA-based
+This program is only intended for the rare circumstances when a program is run
+outside the normal context. An example is "dragen", which is FPGA-based
 hardware.
 
 """

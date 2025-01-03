@@ -1,14 +1,14 @@
 import argparse
 import gzip
 import os
-import re
 import sys
 
 from toolbox import FTX, sam_to_ftx, readfasta
 
 def run(cli, arg):
 	cli = cli.replace('\t', ' ')
-	if arg.verbose: print(cli, file=sys.stderr)
+	cli = '/usr/bin/time -f "BAKETIME %M %U %S %E" ' + cli
+	print(cli, file=sys.stderr)
 	os.system(cli)
 
 def needfastq(arg):
@@ -79,8 +79,6 @@ parser.add_argument('--threads', type=int, default=1,
 	help='number of threads if changeable [%(default)i]')
 parser.add_argument('--debug', action='store_true',
 	help='keep temporary files (e.g. SAM)')
-parser.add_argument('--verbose', action='store_true',
-	help='show various informative messages')
 arg = parser.parse_args()
 
 ###############
@@ -93,65 +91,53 @@ fp = open(ftx, 'w')
 
 if arg.program == 'blat':
 	cli = f'blat {arg.genome} {arg.reads} {out} -out=sim4'
-	if not arg.verbose: cli += ' > /dev/null'
 	run(cli, arg)
 	sim4file_to_ftxstream(out, fp, arg.program)
 elif arg.program == 'bowtie2':
 	if not os.path.exists(f'{arg.genome}.1.bt2'):
 		cli = f'bowtie2-build {arg.genome} {arg.genome}'
-		if not arg.verbose: cli += '>/dev/null 2> /dev/null'
 		run(cli, arg)
 	fastq = needfastq(arg)
 	cli = f'bowtie2 -x {arg.genome} -U {fastq} > {out}'
-	if not arg.verbose: cli += ' 2> /dev/null'
 	run(cli, arg)
 	samfile_to_ftxstream(out, fp, arg.program)
 elif arg.program == 'bwa-mem':
 	if not os.path.exists(f'{arg.genome}.bwt'):
 		cli = f'bwa index {arg.genome}'
-		if not arg.verbose: cli += ' 2> /dev/null'
 		run(cli, arg)
 	cli = f'bwa mem {arg.genome} {arg.reads} > {out}'
-	if not arg.verbose: cli += ' 2> /dev/null'
 	run(cli, arg)
 	samfile_to_ftxstream(out, fp, arg.program)
 elif arg.program == 'gmap':
 	if not os.path.exists(f'{arg.genome}-gmap'):
 		cli = f'gmap_build -d {arg.genome}-gmap -D . {arg.genome}'
-		if not arg.verbose: cli += '>/dev/null 2>/dev/null'
 		run(cli, arg)
 	cli = f'gunzip -c {arg.reads} | gmap -d {arg.genome}-gmap -D . -f samse -t {arg.threads} > {out}'
-	if not arg.verbose: cli += ' 2>/dev/null'
 	run(cli, arg)
 	samfile_to_ftxstream(out, fp, arg.program)
 elif arg.program == 'hisat2':
 	if not os.path.exists(f'{arg.genome}.1.ht2'):
 		cli = f'hisat2-build -f {arg.genome} {arg.genome}'
-		if not arg.verbose: cli += ' >/dev/null 2> /dev/null'
 		run(cli, arg)
 	cli = f'hisat2 -x {arg.genome} -U {arg.reads} -f -p {arg.threads} > {out}'
-	if not arg.verbose: cli += ' 2> /dev/null'
 	run(cli, arg)
 	samfile_to_ftxstream(out, fp, arg.program)
 elif arg.program == 'magicblast':
 	# notes: renames the chromosomes as numbers, maybe fix?
 	if not os.path.exists(f'{arg.genome}.nsq'):
 		cli = f'makeblastdb -dbtype nucl -in {arg.genome}'
-		if not arg.verbose: cli += ' > /dev/null'
 		run(cli, arg)
 	cli = f'magicblast -db {arg.genome} -query {arg.reads} -num_threads {arg.threads} > {out}'
 	run(cli, arg)
 	samfile_to_ftxstream(out, fp, arg.program)
 elif arg.program == 'minimap2':
 	cli = f'minimap2 -ax splice {arg.genome} {arg.reads} -t {arg.threads} > {out}'
-	if not arg.verbose: cli += ' 2> /dev/null'
 	run(cli, arg)
 	samfile_to_ftxstream(out, fp, arg.program)
 elif arg.program == 'pblat':
 	# reads need to be uncompressed (seekable)
 	fasta = needfasta(arg)
-	cli = f'pblat {arg.genome} {fasta} {out} -threads={arg.threads} -out=sim4  2> /dev/null' # it writes a single blank line to stderr...
-	if not arg.verbose: cli += ' > /dev/null'
+	cli = f'pblat {arg.genome} {fasta} {out} -threads={arg.threads} -out=sim4'
 	run(cli, arg)
 	sim4file_to_ftxstream(out, fp, arg.program)
 elif arg.program == 'star':
@@ -159,10 +145,8 @@ elif arg.program == 'star':
 	if not os.path.exists(idx):
 		cli = f'STAR --runMode genomeGenerate --genomeDir {idx}\
 			--genomeFastaFiles {arg.genome} --genomeSAindexNbases 8'
-		if not arg.verbose: cli += ' > /dev/null'
 		run(cli, arg)
 	cli = f'STAR --genomeDir {idx} --readFilesIn {arg.reads} --readFilesCommand "gunzip -c" --outFileNamePrefix {out} --runThreadN 1'
-	if not arg.verbose: cli += ' > /dev/null'
 	run(cli, arg)
 	os.rename(f'{out}Aligned.out.sam', f'{out}')
 	for x in ('Log.final.out', 'Log.out', 'Log.progress.out', 'SJ.out.tab'):
@@ -171,10 +155,8 @@ elif arg.program == 'star':
 elif arg.program == 'tophat2':
 	if not os.path.exists(f'{arg.genome}.1.bt2'):
 		cli = f'bowtie2-build {arg.genome} {arg.genome}'
-		if not arg.verbose: cli += ' >/dev/null 2> /dev/null'
 		run(cli, arg)
 	cli = f'tophat2 -p {arg.threads} {arg.genome} {arg.reads} '
-	if not arg.verbose: cli += ' 2> /dev/null'
 	run(cli, arg)
 	cli = f'samtools view -h tophat_out/accepted_hits.bam > {out}'
 	run(cli, arg)
@@ -195,12 +177,12 @@ with open(ftx) as fp:
 	for line in fp:
 		ali, ref = line.rstrip().split('~')
 		if ref not in aligned: aligned[ref] = ali
-		# keeping only first match (blat sometimes has more than 1)
+		# keeping only first match, assuming it's the best one
 
 with gzip.open(f'{arg.program}.ftx.gz', 'wt') as fp:
 	for ref in refs:
 		if ref in aligned: print(ref, aligned[ref], sep='\t', file=fp)
-		else:              print(ref, 'None', file=fp)
+		else:              print(ref, 'None', sep='\t', file=fp)
 
 ############
 # Clean up #

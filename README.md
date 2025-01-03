@@ -23,7 +23,7 @@ Disclaimer: This project was designed, tested, and executed in an x86-linux
 environment. It may be possible to run outside this context. We may provide
 future support in this area, but not yet.
 
-You must install some flavor of conda. We typically use miniforge3. After conda
+You must install some flavor of conda. We typically use Miniforge3. After conda
 has been installed and you are in the base environment, you may start the next
 steps.
 
@@ -32,23 +32,22 @@ git clone https://github.com/KorfLab/spliced-alignment-bakeoff
 cd spliced-alignment-bakeoff
 conda env create -f env.yml
 conda activate bakeoff
-./bakeoff -vts1 data/ce01.fa data/ce01.ftx build pblat minimap2
+./bakeoff -ts1 data/ce01.fa data/ce01.ftx build pblat minimap2
 ```
 
-## Reproducing the Paper ##
+## Manifest ##
 
-TBA
-
-
-## Programs & Libraries ##
-
-- `bakeoff` program that wraps some parts of the study...
+- `README.md` this document
+- `env.yml` conda environment
+- `bakeoff` top-level wrapper program
+- `data/` directory with some sample files (1% of favorite genomes)
+- `compare-alignments.py` evaluates performance of aligners
 - `genome-simulator.py` creates an experimental genome and annotation
 - `read-simulator.py` creates synthetic RNA-seq reads from FASTA + GFF
 - `run-aligner.py` provides a consistent interface to multiple programs
-- `compare-alignments.py` evaluates performance of aligners
-- `toolbox.py` is the shared library for the project
-
+- `toolbox.py` shared library for the project
+- `sam2ftx.py` for conversion outside the bakeoff context (e.g. dragen)
+- `gff2ftx.py` for converting gff to ftx (requires KorfLab/grimoire)
 
 ## Flattened Transcript Format ##
 
@@ -84,19 +83,9 @@ chr2|gene-2|-|100-200,300-400,500-600|extra free text
 
 ## TO DO ##
 
-- refactor tests
-	- reads from real genomes
-	- reads from simulated genomes
-	- bakeoff runs
+
 - real genomes
 	- have masking, what to do about that?
-	- there are several to try, now have ce, dm, at
-- independence
-	+ separate from intronomicon
-	+ separate from grimoire
-	+ tutorial data separate from datacore
-- automate
-	- bakeoff should collect memory and cpu usage for each program
-	- graphs
-- do we assume that multi-processing gets the same results always?
-	- there may be out-of order differences that are meaningless - skip
+	- what about a large genome?
+- big runs
+- analysis

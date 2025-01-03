@@ -97,14 +97,14 @@ elif arg.program == 'bowtie2':
 		cli = f'bowtie2-build {arg.genome} {arg.genome}'
 		run(cli, arg)
 	fastq = needfastq(arg)
-	cli = f'bowtie2 -x {arg.genome} -U {fastq} > {out}'
+	cli = f'bowtie2 -x {arg.genome} -U {fastq} -k 5 > {out}'
 	run(cli, arg)
 	samfile_to_ftxstream(out, fp, arg.program)
 elif arg.program == 'bwa-mem':
 	if not os.path.exists(f'{arg.genome}.bwt'):
 		cli = f'bwa index {arg.genome}'
 		run(cli, arg)
-	cli = f'bwa mem {arg.genome} {arg.reads} > {out}'
+	cli = f'bwa mem {arg.genome} {arg.reads} -a > {out}'
 	run(cli, arg)
 	samfile_to_ftxstream(out, fp, arg.program)
 elif arg.program == 'gmap':

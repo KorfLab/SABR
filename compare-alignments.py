@@ -63,7 +63,6 @@ with open(f'{arg.basename}_details.txt', 'w') as details:
 			elif ref.similar(ali): r = 'partial'
 			else:                  r = 'wrong'
 			print(f'\t{ali}\t{r}', file=details)
-
 			if len(ref.exons) <= 3: t = sumtable[len(ref.exons) -1]
 			if prog not in t: t[prog] = {}
 			if r not in t[prog]: t[prog][r] = 0
@@ -83,3 +82,4 @@ for i, table in enumerate(sumtable):
 			print(file=fp)
 
 # More performance metrics...
+# bowtie and bwa are suppressing some alignments? or only doing best?

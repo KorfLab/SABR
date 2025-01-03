@@ -59,6 +59,7 @@ class FTX:
 
 	def matches(f1, f2):
 		"""true if all exons are identical"""
+		if len(f1.exons) != len(f2.exons): return False
 		for (b1, e1), (b2, e2) in zip(f1.exons, f2.exons):
 			if b1 != b2: return False
 			if e1 != e2: return False

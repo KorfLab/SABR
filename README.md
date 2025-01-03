@@ -30,11 +30,10 @@ steps.
 ```
 git clone https://github.com/KorfLab/spliced-alignment-bakeoff
 cd spliced-alignment-bakeoff
-conda env create -f bakeoff.yml
+conda env create -f env.yml
 conda activate bakeoff
+./bakeoff -vts1 data/ce01.fa data/ce01.ftx build pblat minimap2
 ```
-
-Demo...
 
 ## Reproducing the Paper ##
 

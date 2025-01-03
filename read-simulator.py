@@ -10,7 +10,7 @@ def generate_reads(gftx, chrom, size):
 	rna = [] # rna sequence
 	for beg, end in gftx.exons:
 		for i in range(end - beg + 1):
-			coor = i + beg -1 # zero-based coordinates
+			coor = i + beg
 			dna.append(coor)
 			rna.append(chrom[coor])
 

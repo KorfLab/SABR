@@ -10,36 +10,27 @@ questions:
 - What improvements can be made in spliced alignment?
 
 Preprint: ___
+
 Reference: ___
 
 ## Quickstart ##
 
-1. Install conda
-2. Clone the repo
-3. Create the environment
-4. Run the demo
+This project was designed, tested, and executed in an x86-linux environment. It
+may be possible to run outside this context. We may provide future support in
+this area, but not yet.
 
-Disclaimer: This project was designed, tested, and executed in an x86-linux
-environment. It may be possible to run outside this context. We may provide
-future support in this area, but not yet.
+1. Install conda (e.g. Miniforge3)
+2. Clone this repo
+3. Create the conda environment from `env.yml`
+4. Run the demos in the `bakeoff` usage statement
 
-You must install some flavor of conda. We typically use Miniforge3. After conda
-has been installed and you are in the base environment, you may start the next
-steps.
-
-```
-git clone https://github.com/KorfLab/spliced-alignment-bakeoff
-cd spliced-alignment-bakeoff
-conda env create -f env.yml
-conda activate bakeoff
-./bakeoff -ts1 data/ce01.fa data/ce01.ftx build pblat minimap2
-```
+See the `TUTORIAL.md` for a step-by-step walkthrough.
 
 ## Manifest ##
 
 - `README.md` this document
 - `env.yml` conda environment
-- `bakeoff` top-level wrapper program
+- `bakeoff` top-level program for running analyses
 - `data/` directory with some sample files (1% of favorite genomes)
 - `compare-alignments.py` evaluates performance of aligners
 - `genome-simulator.py` creates an experimental genome and annotation
@@ -51,8 +42,9 @@ conda activate bakeoff
 
 ## Flattened Transcript Format ##
 
-This project uses a custom file format to embed exon-intron structure in
-FASTA/FASTQ identifiers. It is not intended to be used outside this study.
+This project uses a custom file format to serialize gene structure annotation
+into a single token for embedding in FASTA/FASTQ identifiers. It is not
+intended to be used outside this study.
 
 - file extension: `.ftx` (not an official file extension)
 - field delimiter: `|`
@@ -79,6 +71,13 @@ Example: Minus-strand transcript with some extra info.
 
 ```
 chr2|gene-2|-|100-200,300-400,500-600|extra free text
+```
+
+Example: The information field can contain another ftx. This is used within the
+bakeoff to attach an alignment to its original genomoic source.
+
+```
+chr1|gene-1|+|100-200,300-400,500-600|~chr1|gene-1|+|100-200,300-400,500-600|
 ```
 
 ## TO DO ##

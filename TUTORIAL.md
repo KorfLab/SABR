@@ -75,7 +75,27 @@ by each program by searching for the word `BAKETIME`.
 grep BAKETIME log.txt
 ```
 
-## Unfinished ##
+## Checksum ##
 
-- Checksum the output...
-- Alignment comparisons...
+Alignment software changes from time to time, so the results of a bakeoff might
+also change.
+
+The Version below is what is reported in conda, not what the program reports
+(they may be different).
+
+| Program    | Version    | MD5
+|:-----------|:-----------|:-------------------
+| blat       | 35         | 7d14fe138c93538fa354dc81b2b1b125
+| bowtie2    | 2.2.5      | 82d428ce9cecf1ba3faea029fd0923d8
+| bwa-mem    | 0.7.18     | 9952d6a30fecb6151c01cd59b902d672
+| gmap       | 2024.11.20 | 20ecbd6afa9a6227f3f8ba229cab20bb
+| hisat2     | 2.2.0      | 62588c97be1ed5121c3e259712215962
+| magicblast | 1.7.0      | ad94bf29e78591751c0fbd6bc6daf3c7
+| minimap2   | 2.28       | 30eb4fcd04c987aa06a9f3f4a48b30e9
+| pblat      | 2.5.1      | 7e890564345bba227357b21d805c1dc0
+| star       | 2.7.11a    | 3716011e070c9c1af6608862572ec2d9
+| tophat2    | 2.1.1      | 4e96a43671af9e3472c2aec83643c223
+
+## Alignment comparisons ##
+
+Unfinished

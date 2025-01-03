@@ -14,7 +14,6 @@ def run(cli, arg):
 def needfastq(arg):
 	fastq = f'{arg.reads[0:arg.reads.find(".")]}.fq.gz'
 	if not os.path.exists(fastq):
-		if arg.verbose: print('creating fastq file', file=sys.stderr)
 		with gzip.open(fastq, 'wt') as fp:
 			for name, seq in readfasta(arg.reads):
 				print('@', name, file=fp, sep='')

@@ -183,8 +183,8 @@ def cigar_to_exons(cigar, pos):
 		if   op == 'M': end += n
 		elif op == 'D': pass
 		elif op == 'I': end += n
-		#elif op == 'S': beg += n # is this right?
-		#elif op == 'H': pass
+		elif op == 'S': pass
+		elif op == 'H': pass
 		elif op == 'N':
 			exons.append((pos+beg-1, pos+end-2))
 			beg = end + n
@@ -192,7 +192,7 @@ def cigar_to_exons(cigar, pos):
 	exons.append((pos+beg-1, pos+end-2))
 	return exons
 
-def sam_to_ftx(filename, info=None):
+def sam_to_ftx(filename):
 	"""generates ftx objects from sam file"""
 	n = 0
 	with open(filename) as fp:
@@ -213,4 +213,4 @@ def sam_to_ftx(filename, info=None):
 				sys.exit('unexpected flags found, debug me')
 			n += 1
 			exons = cigar_to_exons(cigar, pos)
-			yield FTX(chrom, str(n), st, exons, f'{info}~{qname}')
+			yield FTX(chrom, str(n), st, exons, f'~{qname}')

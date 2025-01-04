@@ -27,42 +27,43 @@ def needfasta(arg):
 	if not os.path.exists(fasta): os.system(f'gunzip -k {arg.reads}')
 	return fasta
 
-def samfile_to_ftxstream(filename, out, name):
-	for ftx in sam_to_ftx(filename, info=name):
-		print(ftx, file=out)
+def samfile_to_ftxfile(filename, ftxfile):
+	with open(ftxfile, 'w') as out:
+		for ftx in sam_to_ftx(filename):
+			print(ftx, file=out)
 
-def sim4file_to_ftxstream(filename, out, name):
+def sim4file_to_ftxfile(filename, ftxfile):
 	chrom = None
 	strand = None
 	exons = []
 	ref = None
 	n = 0
 	with open(filename) as fp:
-		for line in fp:
-			if line.startswith('seq1 ='):
-				if chrom is not None:
-					ftx = FTX(chrom, str(n), strand, exons,
-						f'{arg.program}~{ref}')
-					print(ftx, file=out)
-				chrom = None
-				strand = None
-				exons = []
-				ref = line[7:].split(' ')[0][:-1]
-				n += 1
-				continue
-			elif line.startswith('seq2 ='):
+		with open(ftxfile, 'w') as out:
+			for line in fp:
+				if line.startswith('seq1 ='):
+					if chrom is not None:
+						ftx = FTX(chrom, str(n), strand, exons, f'~{ref}')
+						print(ftx, file=out)
+					chrom = None
+					strand = None
+					exons = []
+					ref = line[7:].split(' ')[0][:-1]
+					n += 1
+					continue
+				elif line.startswith('seq2 ='):
+					f = line.split()
+					chrom = f[2][:-1]
+					continue
 				f = line.split()
-				chrom = f[2][:-1]
-				continue
-			f = line.split()
-			if len(f) != 4: continue
-			beg, end = f[1][1:-1].split('-')
-			exons.append((int(beg) -1, int(end) -1))
-			st = '+' if f[3] == '->' else '-'
-			if strand is None: strand = st
-			else: assert(strand == st)
-		ftx = FTX(chrom, str(n), strand, exons, f'{name}~{ref}')
-		print(ftx, file=out)
+				if len(f) != 4: continue
+				beg, end = f[1][1:-1].split('-')
+				exons.append((int(beg) -1, int(end) -1))
+				st = '+' if f[3] == '->' else '-'
+				if strand is None: strand = st
+				else: assert(strand == st)
+			ftx = FTX(chrom, str(n), strand, exons, f'~{ref}')
+			print(ftx, file=out)
 
 #######
 # CLI #
@@ -84,14 +85,13 @@ arg = parser.parse_args()
 # Run Aligner #
 ###############
 
-out = f'temp-{os.getpid()}' # temporary output file
-ftx = f'ftx-{os.getpid()}'  # temporary ftx file
-fp = open(ftx, 'w')
+out = f'tmp-{arg.program}' # temporary output file
+ftx = f'ftx-{arg.program}' # temporary ftx file
 
 if arg.program == 'blat':
 	cli = f'blat {arg.genome} {arg.reads} {out} -out=sim4'
 	run(cli, arg)
-	sim4file_to_ftxstream(out, fp, arg.program)
+	sim4file_to_ftxfile(out, ftx)
 elif arg.program == 'bowtie2':
 	if not os.path.exists(f'{arg.genome}.1.bt2'):
 		cli = f'bowtie2-build {arg.genome} {arg.genome}'
@@ -99,28 +99,28 @@ elif arg.program == 'bowtie2':
 	fastq = needfastq(arg)
 	cli = f'bowtie2 -x {arg.genome} -U {fastq} -k 5 > {out}'
 	run(cli, arg)
-	samfile_to_ftxstream(out, fp, arg.program)
+	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'bwa-mem':
 	if not os.path.exists(f'{arg.genome}.bwt'):
 		cli = f'bwa index {arg.genome}'
 		run(cli, arg)
 	cli = f'bwa mem {arg.genome} {arg.reads} -a > {out}'
 	run(cli, arg)
-	samfile_to_ftxstream(out, fp, arg.program)
+	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'gmap':
 	if not os.path.exists(f'{arg.genome}-gmap'):
 		cli = f'gmap_build -d {arg.genome}-gmap -D . {arg.genome}'
 		run(cli, arg)
 	cli = f'gunzip -c {arg.reads} | gmap -d {arg.genome}-gmap -D . -f samse -t {arg.threads} > {out}'
 	run(cli, arg)
-	samfile_to_ftxstream(out, fp, arg.program)
+	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'hisat2':
 	if not os.path.exists(f'{arg.genome}.1.ht2'):
 		cli = f'hisat2-build -f {arg.genome} {arg.genome}'
 		run(cli, arg)
 	cli = f'hisat2 -x {arg.genome} -U {arg.reads} -f -p {arg.threads} > {out}'
 	run(cli, arg)
-	samfile_to_ftxstream(out, fp, arg.program)
+	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'magicblast':
 	# notes: renames the chromosomes as numbers, maybe fix?
 	if not os.path.exists(f'{arg.genome}.nsq'):
@@ -128,17 +128,17 @@ elif arg.program == 'magicblast':
 		run(cli, arg)
 	cli = f'magicblast -db {arg.genome} -query {arg.reads} -num_threads {arg.threads} > {out}'
 	run(cli, arg)
-	samfile_to_ftxstream(out, fp, arg.program)
+	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'minimap2':
 	cli = f'minimap2 -ax splice {arg.genome} {arg.reads} -t {arg.threads} > {out}'
 	run(cli, arg)
-	samfile_to_ftxstream(out, fp, arg.program)
+	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'pblat':
 	# reads need to be uncompressed (seekable)
 	fasta = needfasta(arg)
 	cli = f'pblat {arg.genome} {fasta} {out} -threads={arg.threads} -out=sim4'
 	run(cli, arg)
-	sim4file_to_ftxstream(out, fp, arg.program)
+	sim4file_to_ftxfile(out, ftx)
 elif arg.program == 'star':
 	idx = f'{arg.genome}-star'
 	if not os.path.exists(idx):
@@ -150,7 +150,7 @@ elif arg.program == 'star':
 	os.rename(f'{out}Aligned.out.sam', f'{out}')
 	for x in ('Log.final.out', 'Log.out', 'Log.progress.out', 'SJ.out.tab'):
 		os.unlink(f'{out}{x}')
-	samfile_to_ftxstream(out, fp, arg.program)
+	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'tophat2':
 	if not os.path.exists(f'{arg.genome}.1.bt2'):
 		cli = f'bowtie2-build {arg.genome} {arg.genome}'
@@ -159,12 +159,10 @@ elif arg.program == 'tophat2':
 	run(cli, arg)
 	cli = f'samtools view -h tophat_out/accepted_hits.bam > {out}'
 	run(cli, arg)
-	samfile_to_ftxstream(out, fp, arg.program)
+	samfile_to_ftxfile(out, ftx)
 	if not arg.debug: os.system('rm -rf tophat_out')
 else:
 	sys.exit(f'ERROR: unknown program: {arg.program}')
-
-fp.close()
 
 #####################
 # Report Alignments #

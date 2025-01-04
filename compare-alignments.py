@@ -1,6 +1,8 @@
 import argparse
+import glob
 import gzip
 import json
+import os
 import sys
 
 from toolbox import FTX
@@ -19,9 +21,7 @@ def best_alignment(ref, text):
 	return min_ali
 
 parser = argparse.ArgumentParser(description='alignment evaluator')
-parser.add_argument('files', nargs='+', help='run-aligner.py output files')
-parser.add_argument('--basename', required=True,
-	help='base name for various output files')
+parser.add_argument('dir', help='bakeoff build directory')
 parser.add_argument('--minexon', type=int, default=20,
 	help='minimum exon length for table3 [%(default)i]')
 parser.add_argument('--experimental', action='store_true',
@@ -34,12 +34,10 @@ arg = parser.parse_args()
 
 fps = []
 progs = []
-for file in arg.files:
-	if   file.endswith('.ftx.gz'): fp = gzip.open(file, 'rt')
-	elif file.endswith('.ftx'):    fp = open(file)
-	else: sys.exit(f'unexpected file {file}')
-	fps.append(fp)
-	progs.append(file[:file.index('.')])
+for file in glob.glob(f'{arg.dir}/*.ftx.gz'):
+	fps.append(gzip.open(file, 'rt'))
+	pname = os.path.basename(file)[:-7]
+	progs.append(pname)
 
 data = {}
 while True:
@@ -52,17 +50,17 @@ while True:
 
 # Evaluate best alignments and gather summary stats
 sumtable = [{}, {}, {}]
-with open(f'{arg.basename}_details.txt', 'w') as details:
+with open(f'{arg.dir}/details.txt', 'w') as details:
 	for rstr in data:
 		ref = FTX.parse(rstr)
 		print(ref, file=details)
-		for prog, astr in data[rstr].items():
-			ali = best_alignment(ref, astr)
+		for prog in sorted(data[rstr]):
+			ali = best_alignment(ref, data[rstr][prog])
 			if   ali is None:      r = 'unaligned'
 			elif ref.matches(ali): r = 'match'
 			elif ref.similar(ali): r = 'partial'
 			else:                  r = 'wrong'
-			print(f'\t{ali}\t{r}', file=details)
+			print(f'\t{prog}\t{r}\t{ali}', file=details)
 			if len(ref.exons) <= 3: t = sumtable[len(ref.exons) -1]
 			if prog not in t: t[prog] = {}
 			if r not in t[prog]: t[prog][r] = 0
@@ -71,9 +69,9 @@ with open(f'{arg.basename}_details.txt', 'w') as details:
 # Write summary stats
 categories = ('match', 'partial', 'wrong', 'unaligned')
 for i, table in enumerate(sumtable):
-	with open(f'{arg.basename}_table{i+1}.tsv', 'w') as fp:
+	with open(f'{arg.dir}/table{i+1}.tsv', 'w') as fp:
 		print('program\t', '\t'.join(categories), file=fp)
-		for prog in table:
+		for prog in sorted(table):
 			print(prog, end='\t', file=fp)
 			for cat in categories:
 				if cat not in table[prog]: n = 0
@@ -82,4 +80,3 @@ for i, table in enumerate(sumtable):
 			print(file=fp)
 
 # More performance metrics...
-# bowtie and bwa are suppressing some alignments? or only doing best?

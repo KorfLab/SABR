@@ -72,16 +72,13 @@ fx = open(f'{arg.name}.ftx', 'w')
 
 # MAIN LOOP
 
-gene = 0
 for c in range(arg.chroms):
 	chrom = f'c{c+1}'
 	print(f'>{chrom}', file=fa)
 	off = 0
-
 	for i in range(arg.emin, arg.emax+1, arg.estep):
 		for strand in strands:
 			for site in sites:
-				gene += 1
 				f1 = random_flank(arg.flank, arg.debug)
 				e1 = random_exon(arg.exon, arg.debug)
 				i1 = random_intron(arg.intron, site, strand, arg.debug)
@@ -91,15 +88,15 @@ for c in range(arg.chroms):
 				f2 = random_flank(arg.flank, arg.debug)
 				e1b = len(f1) + off
 				e1e = e1b + len(e1)
-				e2b = e1e + len(i1)
+				evb = e1e + len(i1)
+				eve = evb + len(ve)
+				e2b = eve + len(i2)
 				e2e = e2b + len(e2)
-				e3b = e2e + len(i2)
-				e3e = e3b + len(e2)
-				exons = ( (e1b,e1e-1), (e2b,e2e-1), (e3b,e3e-1) )
+				exons = ( (e1b,e1e-1), (evb,eve-1), (e2b,e2e-1) )
 				seq = f1 + e1 + i1 + ve + i2 + e2 + f2
 				off += len(seq)
 				print(seq, file=fa)
-				ftx = FTX(chrom, f'gene-{gene}', strand, exons, '')
+				ftx = FTX(chrom, f'{i}:{site}', strand, exons, '')
 				print(ftx, file=fx)
 
 fa.close()

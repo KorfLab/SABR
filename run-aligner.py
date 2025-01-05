@@ -2,11 +2,12 @@ import argparse
 import gzip
 import os
 import sys
+import time
 
 from toolbox import FTX, sam_to_ftx, readfasta
 
 def run(cli):
-	cli = '/usr/bin/time -f "BAKETIME %M %U %S %E" ' + cli
+	cli = '/usr/bin/time -f "BAKEOFF TIME %M %U %S %E" ' + cli
 	print(cli, file=sys.stderr)
 	os.system(cli)
 
@@ -88,12 +89,13 @@ if arg.program not in programs: sys.exit(f'unknown program: {arg.program}')
 
 out = f'tmp-{arg.program}' # temporary output file
 ftx = f'ftx-{arg.program}' # temporary ftx file
+t0 = time.time()
 
 if arg.program == 'blat':
 	run(f'blat {arg.genome} {arg.reads} {out} -out=sim4')
 	sim4file_to_ftxfile(out, ftx)
 elif arg.program == 'bbmp':
-	if not os.path.exists('ref'): run(f'bbmap.sh {arg.genome}')
+	if not os.path.exists('ref'): run(f'bbmap.sh ref={arg.genome}')
 	run(f'bbmap.sh in={arg.reads} ref={arg.genome} threads={arg.threads} out={out}')
 	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'bow2':
@@ -150,6 +152,9 @@ elif arg.program == 'top2':
 	samfile_to_ftxfile(out, ftx)
 else:
 	sys.exit(f'ERROR: unknown program: {arg.program}')
+
+elapsed = time.time() - t0
+print(f'BAKEOFF ELAPSED: {elapsed}', file=sys.stderr)
 
 #####################
 # Report Alignments #

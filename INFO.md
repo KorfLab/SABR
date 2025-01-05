@@ -44,8 +44,8 @@ chr1|gene-1|+|100-200,300-400,500-600|~chr1|gene-1|+|100-200,300-400,500-600|
 
 ## Regression Testing ##
 
-To ensure that the genome data and reads are exactly as expected, checksum the
-bakeoff data files.
+To ensure that the genome data and reads are exactly as expected, you might
+want to checksum the bakeoff data files.
 
 ```
 ./bakeoff -mts1 data/ce01.fa.gz data/ce01.ftx.gz build
@@ -69,10 +69,10 @@ however many you like, but note that memory usage with some programs may become
 excessive.
 
 The program versions shown below are what `conda env export` reports, and not
-necessarily what the program reports.
+necessarily what the program reports about itself.
 
-With those caveats in place, we can checksum the blat and star outputs with the
-following command.
+With those caveats in place, we can checksum the `blat.ftx.gz` and
+`star.ftx.gz` outputs with the following command.
 
 ```
 ./bakeoff -mts1 data/ce01.fa.gz data/ce01.ftx.gz build blat star
@@ -98,25 +98,22 @@ Here's the table of MD5s used in the paper ...
 | subr | subread     | 2.0.6      | 6ef20af10bfbe8d4b4e2bf84fe62e86f
 | top2 | tophat2     | 2.1.1      | 530e0f92cc4674f4662177f01826fa30
 
-## Resource Usage ##
-
-Redirect the output and grep BAKEOFF in the log
-Probably best to use a VM with a single cpu
-
 ## Synthetic Genomes & Reads ##
 
 The `genome-simulator.py` program creates a 3-exon gene whose middle exon has
-variable length.
+variable length. A text-glyph is shown below. By default, all introns follow
+the GT-AG rule.
 
 ```
 ~~~[exon]--intron--[var.exon]--intron--[exon]~~~
 ```
 
 Passing the `--double`` flag creates genes on both strands and the
-`--noncanonical` flag creates introns with additional splice sites.
+`--noncanonical` flag creates introns with additional splice sites: GC-AG,
+AT-AC, and AA-TT (this last one is used to represent 'other').
 
 The `read-simulator.py` program generates reads along the entire length of a
-gene's mRNA.
+gene's mRNA. The `--double` flag creates reads from both strands.
 
 ```
 [exon][var.exon][exon]

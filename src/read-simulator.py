@@ -46,10 +46,6 @@ parser.add_argument('--seed', type=int, default=0, metavar='<int>',
 	help='set random seed')
 parser.add_argument('--double', action='store_true',
 	help='produce reads from both strands')
-parser.add_argument('--spliced', action='store_true',
-	help='only produce reads that splice')
-parser.add_argument('--coding', action='store_true',
-	help='use only good coding genes (e.g. when sampling real genomes')
 arg = parser.parse_args()
 
 if arg.seed != 0: random.seed(arg.seed)
@@ -63,7 +59,6 @@ for cname, cseq, gtfxs in generator(arg.fasta, arg.ftx):
 		if random.random() > arg.samplegenes: continue
 		genes += 1
 		for rftx, rseq in generate_reads(gftx, cseq, arg.readlength):
-			if arg.spliced and len(rftx.exons) == 1: continue
 			if random.random() < arg.samplereads:
 				print('>', rftx, '+', sep='')
 				print(rseq)

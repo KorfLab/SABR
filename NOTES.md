@@ -1,8 +1,7 @@
 NOTES: Spliced Alignment Bakeoff
 ================================
 
-Project lead should contact the authors to get their best parameters for
-accurate spliced alignment.
+## Contacting Authors for Best Parameters ##
 
 - bbmap
 - blat
@@ -20,11 +19,17 @@ accurate spliced alignment.
 - subread
 - tophat
 
+## Real Genome Issues ##
+
 Real genomes have repeats. Do any of the exons overlap repeats? Might want to
 do the whole study with clean and masked sequence.
 
+Check for N's in any of the exons.
+
 Real genomes have duplications. It can therefore be impossible to locate the
 correct alignment. Should we try to identify regions of identity at the outset?
+
+BLAST the virtual mRNAs against each other and the genome.
 
 Sanity checks
 
@@ -32,7 +37,7 @@ Sanity checks
 - single and multiple cpus give the same answer
 - names are preserved (e.g. chromsosomes)
 
-Alignment Notes
+## Alignment Notes ##
 
 - hisat2 sometimes makes really short exons instead of a single alignment
 - minimap2 sometimes aligns + and - reads differently

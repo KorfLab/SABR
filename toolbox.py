@@ -177,10 +177,12 @@ def cigar_to_exons(cigar, pos):
 	exons = []
 	beg = 0
 	end = 0
-	for match in re.finditer(r'(\d+)([A-Z])', cigar):
+	for match in re.finditer(r'(\d+)([\D])', cigar):
 		n = int(match.group(1))
 		op = match.group(2)
 		if   op == 'M': end += n
+		elif op == '=': end += n
+		elif op == 'X': end += n
 		elif op == 'D': pass
 		elif op == 'I': end += n
 		elif op == 'S': pass

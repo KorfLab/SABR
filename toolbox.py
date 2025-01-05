@@ -195,7 +195,7 @@ def cigar_to_exons(cigar, pos):
 def sam_to_ftx(filename):
 	"""generates ftx objects from sam file"""
 	n = 0
-	with open(filename) as fp:
+	with open(filename, errors='ignore') as fp:
 		for line in fp:
 			if line == '': break
 			if line.startswith('@'): continue

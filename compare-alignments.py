@@ -18,6 +18,9 @@ def best_alignment(ref, text):
 		if s < min_dist:
 			min_dist = s
 			min_ali = ali
+		elif s == min_dist:             # this is new
+			min_ali.info += f'~{ali}'   # hope it works
+			#print('concat', min_ali, file=sys.stderr)
 	return min_ali
 
 parser = argparse.ArgumentParser(description='alignment evaluator')

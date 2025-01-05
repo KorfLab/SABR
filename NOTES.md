@@ -1,7 +1,9 @@
 NOTES: Spliced Alignment Bakeoff
 ================================
 
-## Contacting Authors for Best Parameters ##
+## Contact Authors for Best Parameters ##
+
+Probably should do the whole thing with both optimized and default parameters.
 
 - bbmap
 - blat
@@ -31,11 +33,14 @@ correct alignment. Should we try to identify regions of identity at the outset?
 
 BLAST the virtual mRNAs against each other and the genome.
 
-Sanity checks
+New program stub `ftx2fasta.py` to make that happen...
+
+## Sanity checks ##
 
 - plus and minus strand have the exact same results
 - single and multiple cpus give the same answer
-- names are preserved (e.g. chromsosomes)
+- same thing run twice has the same answer (md5)
+- names are preserved (e.g. chromsosomes, not in magicblast)
 
 ## Alignment Notes ##
 
@@ -48,6 +53,9 @@ it's time to look deeper.
 
 
 ## Resources ##
+
+Something like this will go in supplementary information. Also memory usage.
+Not sure /usr/bin/time agglomerates children though.
 
 Single CPU VM, single CPU run
 

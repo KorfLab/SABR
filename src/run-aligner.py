@@ -76,12 +76,15 @@ parser = argparse.ArgumentParser( description=f'spliced alignment runner',
 parser.add_argument('genome', help='genome file in FASTA format')
 parser.add_argument('reads', help='reads file in FASTA format')
 parser.add_argument('program', help='abbreviation of program name')
+parser.add_argument('--accurate', action='store_true',
+	help='use parameters optimized for accuracy')
 parser.add_argument('--threads', type=int, default=1,
 	help='number of threads if changeable [%(default)i]')
 parser.add_argument('--debug', action='store_true',
 	help='keep temporary files (e.g. SAM)')
 arg = parser.parse_args()
 if arg.program not in programs: sys.exit(f'unknown program: {arg.program}')
+if arg.accurate: sys.exit('--accurate not implemented yet')
 
 ###############
 # Run Aligner #

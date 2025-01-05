@@ -154,7 +154,7 @@ else:
 	sys.exit(f'ERROR: unknown program: {arg.program}')
 
 elapsed = time.time() - t0
-print(f'BAKEOFF ELAPSED: {elapsed}', file=sys.stderr)
+print(f'BAKEOFF ELAPSED {arg.program}: {elapsed}', file=sys.stderr)
 
 #####################
 # Report Alignments #

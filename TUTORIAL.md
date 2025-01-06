@@ -70,4 +70,17 @@ may like to grep that later for BAKEOFF.
 grep BAKEOFF log.txt
 ```
 
+For a more complete test, examine and then run `test-bakeoff.sh`.
+
+```
+cat test-bakeoff.sh
+sh test-bakeoff.sh
+```
+
+To reproduce the data in the paper, run `full-bakeoff.sh`.
+
+```
+sh full-bakeoff.sh
+```
+
 ## Analysis ##

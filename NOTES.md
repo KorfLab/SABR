@@ -1,6 +1,9 @@
 NOTES: Spliced Alignment Bakeoff
 ================================
 
+Getting inconsistent errors with bbmap. Maybe something to do with the indexes
+being built and rebuilt.
+
 ## Contact Authors for Best Parameters ##
 
 Probably should do the whole thing with both optimized and default parameters.

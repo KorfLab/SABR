@@ -78,7 +78,7 @@ With those caveats in place, we can checksum the `blat.ftx.gz` and
 ./bakeoff -mts1 data/ce01.fa.gz data/ce01.ftx.gz build blat star
 ```
 
-Here's the table of MD5s used in the paper ...
+Here's the table of MD5s for the `*.ftx.gz files` used in the 2025 paper ...
 
 | Abbr | Program     | Conda      | MD5
 |:-----|:------------|:-----------|:--------------------------------
@@ -91,7 +91,6 @@ Here's the table of MD5s used in the paper ...
 | hst2 | hisat2      | 2.2.0      | 9144fb25a43c4cac71e3d54a8db466a9
 | magi | magicblast  | 1.7.0      | 1394c3d3c6077d319046b41ebd8d093e
 | min2 | minimap2    | 2.28       | 47921c827e614290d64609b7275a9aba
-| novo | novoalign   | 4.03.04    |
 | pblt | pblat       | 2.5.1      | 8aed9d45ec270798bdbc4da5a7bb66f8
 | sege | segemehl    | 0.3.4      | 29a11fef7edd7e696accfa325076a638
 | star | star        | 2.7.11a    | ee09b00cbb8b07be2d5a1a5fa28d6ae1

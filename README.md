@@ -10,10 +10,6 @@ questions:
 - What improvements can be made in spliced alignment?
 - Do aligners fail some simple sanity checks?
 
-Preprint: ___
-
-Reference: ___
-
 ## Quickstart ##
 
 This project was designed, tested, and executed in an x86-linux environment.
@@ -36,3 +32,4 @@ See the `TUTORIAL.md` for a step-by-step walkthrough.
 - `bakeoff` top-level program for running a bakeoff
 - `data/` directory with some sample files (1% of favorite genomes)
 - `src/` directory with programs that run various parts of the bakeoff
+- `2025/` directory with specifics for the 2025 study

@@ -71,7 +71,7 @@ def sim4file_to_ftxfile(filename, ftxfile):
 
 programs = ('bbmp', 'blat', 'bow2', 'bwam', 'gem3', 'gmap', 'hst2', 'magi',
 	'min2', 'pblt', 'sege', 'star', 'subr', 'top2')
-parser = argparse.ArgumentParser( description=f'spliced alignment runner',
+parser = argparse.ArgumentParser(description=f'spliced alignment runner',
 	epilog = 'programs: ' + ' '.join(programs))
 parser.add_argument('genome', help='genome file in FASTA format')
 parser.add_argument('reads', help='reads file in FASTA format')

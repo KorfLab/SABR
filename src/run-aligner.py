@@ -8,6 +8,7 @@ from toolbox import FTX, sam_to_ftx, readfasta
 
 def run(cli):
 	cli = '/usr/bin/time -f "BAKEOFF TIME %M %U %S %E" ' + cli
+	#cli = 'busybox time -v ' + cli
 	print(cli, file=sys.stderr)
 	os.system(cli)
 
@@ -98,8 +99,7 @@ if arg.program == 'blat':
 	run(f'blat {arg.genome} {arg.reads} {out} -out=sim4')
 	sim4file_to_ftxfile(out, ftx)
 elif arg.program == 'bbmp':
-	if not os.path.exists('ref'): run(f'bbmap.sh ref={arg.genome}')
-	run(f'bbmap.sh in={arg.reads} ref={arg.genome} threads={arg.threads} out={out}')
+	run(f'bbmap.sh in={arg.reads} ref={arg.genome} nodisk=t threads={arg.threads} out={out}')
 	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'bow2':
 	if not os.path.exists(f'{arg.genome}.1.bt2'): run(f'bowtie2-build {arg.genome} {arg.genome}')
@@ -116,7 +116,8 @@ elif arg.program == 'gem3':
 	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'gmap':
 	if not os.path.exists(f'{arg.genome}-gmap'): run(f'gmap_build -d {arg.genome}-gmap -D . {arg.genome}')
-	run(f'gunzip -c {arg.reads} | gmap -d {arg.genome}-gmap -D . -f samse -t {arg.threads} > {out}')
+	fasta = needfasta(arg)
+	run(f'gmap {fasta} -d {arg.genome}-gmap -D . -f samse -t {arg.threads} > {out}')
 	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'hst2':
 	if not os.path.exists(f'{arg.genome}.1.ht2'): run(f'hisat2-build -f {arg.genome} {arg.genome}')
@@ -129,8 +130,6 @@ elif arg.program == 'magi': # note: renames the chromosomes as numbers
 elif arg.program == 'min2':
 	run(f'minimap2 -ax splice {arg.genome} {arg.reads} -t {arg.threads} > {out}')
 	samfile_to_ftxfile(out, ftx)
-elif arg.program == 'novo':
-	sys.exit('license required for novoalign') # should evaluate
 elif arg.program == 'pblt': # note: reads need to be uncompressed (seekable)
 	fasta = needfasta(arg)
 	run(f'pblat {arg.genome} {fasta} {out} -threads={arg.threads} -out=sim4')

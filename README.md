@@ -1,9 +1,8 @@
 README: Spliced Alignment Bakeoff
 =================================
 
-Aligning transcript (mRNA) sequences to their genomic source locations is a
-surprisingly difficult problem. This project seeks to answer the following
-questions:
+Aligning RNA-seq reads to their genomic source locations is a surprisingly
+difficult problem. This project seeks to answer the following questions:
 
 - Which is the most accurate aligner for RNA-seq data?
 - What kinds of sequence and gene features create the most problems?

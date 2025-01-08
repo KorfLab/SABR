@@ -1,12 +1,6 @@
 NOTES: Spliced Alignment Bakeoff
 ================================
 
-`/usr/bin/time` doesn't work on Mac. Maybe install something that reports
-resources that works better than this anyway.
-
-Getting inconsistent errors with bbmap. Maybe something to do with the indexes
-being built and rebuilt.
-
 ## Contact Authors for Best Parameters ##
 
 Probably should do the whole thing with both optimized and default parameters.
@@ -28,17 +22,8 @@ Probably should do the whole thing with both optimized and default parameters.
 
 ## Real Genome Issues ##
 
-Real genomes have repeats. Do any of the exons overlap repeats? Might want to
-do the whole study with clean and masked sequence.
-
-Check for N's in any of the exons. There are none.
-
-Real genomes have duplications. It can therefore be impossible to locate the
-correct alignment. Should we try to identify regions of identity at the outset?
-
-BLAST the virtual mRNAs against each other and the genome.
-
-New program stub `ftx2fasta.py` to make that happen...
+- All regions of transcript-similarity are in paralogy.txt
+- Check for N's in any of the exons. There are none.
 
 ## Sanity checks ##
 

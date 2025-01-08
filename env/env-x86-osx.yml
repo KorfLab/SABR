@@ -1,4 +1,4 @@
-name: bakeoff
+name: bakeoff-x86-osx
 channels:
   - conda-forge
   - bioconda

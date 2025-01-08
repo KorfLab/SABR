@@ -1,0 +1,22 @@
+name: bakeoff-x86-linux
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bbmap
+  - blast       # used for indexing magicblast and paralogy studies
+  - blat
+  - bowtie2     # used for indexing tophat and no-splice control
+  - bwa         # used for no-splice control
+  - gem3-mapper
+  - gmap
+  - hisat2
+  - magicblast
+  - minimap2
+  - pblat
+  - samtools    # used only for tophat bam conversion
+  - segemehl
+  - star
+  - subread
+  - tophat

@@ -7,7 +7,7 @@ import time
 from toolbox import FTX, sam_to_ftx, readfasta
 
 def run(cli):
-	cli = '/usr/bin/time -f "BAKEOFF TIME %M %U %S %E" ' + cli
+	#cli = '/usr/bin/time -f "BAKEOFF TIME %M %U %S %E" ' + cli
 	#cli = 'busybox time -v ' + cli
 	print(cli, file=sys.stderr)
 	os.system(cli)

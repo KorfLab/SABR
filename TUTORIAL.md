@@ -59,11 +59,10 @@ zless build/blat.ftx.gz
 zless build/star.ftx.gz
 ```
 
-Let's look at the 2nd example command line. The `-f` flag forces the aligners
-to run again and overwrite the output files. The `-m` flag reports MD5
-checksums for the data files and program outputs. The cryptic  `> log.txt 2>&1`
-at the end of the line writes both stdout and stderr to a `log.txt` file. You
-may like to grep that later for BAKEOFF.
+Let's look at the 2nd example command line. The `-f` flag forces rewrite. The
+`-m` flag reports MD5 checksums for the data files and program outputs. The
+cryptic  `> log.txt 2>&1` at the end of the line writes both stdout and stderr
+to a `log.txt` file. You may like to grep that later for BAKEOFF.
 
 ```
 ./bakeoff -fmts1 data/ce01.* build pblat minimap2 > log.txt 2>&1

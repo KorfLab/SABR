@@ -8,7 +8,7 @@ our ($opt_a, $opt_d, $opt_f, $opt_h, $opt_m, $opt_p, $opt_s, $opt_t);
 our ($CPU, $OS, $TIME, $MD5);
 getopts('adfhmp:s:t');
 
-my @PROGRAM = qw(blat bbmap bowtie2 bwa gem3-mapper gmap hisat2 magicblast
+my @PROGRAM = qw(bbmap blat bowtie2 bwa gem3-mapper gmap hisat2 magicblast
 	minimap2 pblat segemehl star subread tophat);
 
 # Environment
@@ -65,7 +65,7 @@ examples:
 die $usage unless @ARGV >= 3;
 die $usage if $opt_h;
 my ($src_dna, $src_ftx, $dir, @program) = @ARGV;
-if ($program[0] eq '__all__') {@program = @AVAIL}
+if (@program and $program[0] eq '__all__') {@program = @AVAIL}
 else {for my $p (@program) {die "ERROR: $p?\n" unless grep(/^$p$/, @AVAIL)}}
 
 # Setup
@@ -86,7 +86,7 @@ if (not -d $dir or $opt_f) {
 	if ($opt_t) {$cli .= " --samplereads 0.1 --samplegenes 0.1"}
 	if ($opt_s) {$cli .= " --seed $opt_s"}
 	$cli .= " | gzip > $dir/$rna";
-	`$cli`;
+	system($cli) == 0 or die;
 }
 
 # Align
@@ -98,7 +98,9 @@ foreach my $prog (@program) {
 	$cli .= " --threads $opt_p" if $opt_p;
 	$cli .= " --debug" if $opt_d;
 	$cli .= " $prog";
-	`$cli` unless -s "$prog.ftx.gz" and not $opt_f;
+	if ($opt_f or !-e "$prog.ftx.gz") {
+		system($cli) == 0 or die "ERROR: from $cli\n";
+	}
 }
 
 # Checksum
@@ -115,4 +117,4 @@ if ($opt_m) {
 
 # Compare, Plot, etc
 
-`python3 $BASE/src/compare-alignments.py .`
+system("python3 $BASE/src/compare-alignments.py .") == 0 or die;

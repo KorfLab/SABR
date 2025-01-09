@@ -7,7 +7,7 @@ from toolbox import FTX, sam_to_ftx, readfasta
 
 def run(cli):
 	print(cli, file=sys.stderr)
-	os.system(cli)
+	if os.system(cli) != 0: sys.exit(f'FAILED: {cli}')
 
 def needfastq(arg):
 	fastq = f'{arg.reads[0:arg.reads.find(".")]}.fq.gz'

@@ -27,8 +27,7 @@ def needfasta(arg):
 
 def samfile_to_ftxfile(filename, ftxfile):
 	with open(ftxfile, 'w') as out:
-		for ftx in sam_to_ftx(filename):
-			print(ftx, file=out)
+		for ftx in sam_to_ftx(filename): print(ftx, file=out)
 
 def sim4file_to_ftxfile(filename, ftxfile):
 	chrom = None
@@ -70,7 +69,7 @@ parser.add_argument('genome', help='genome file in FASTA format')
 parser.add_argument('reads', help='reads file in FASTA format')
 parser.add_argument('program', help='program name (from conda package)')
 parser.add_argument('--accurate', action='store_true',
-	help='use parameters optimized for accuracy')
+	help='use author-suggested parameters optimized for accuracy')
 parser.add_argument('--threads', type=int, default=1,
 	help='number of threads if changeable [%(default)i]')
 parser.add_argument('--debug', action='store_true',

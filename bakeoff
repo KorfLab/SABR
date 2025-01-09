@@ -4,18 +4,15 @@ use strict;
 use warnings;
 use Cwd;
 use Getopt::Std;
-our ($opt_a, $opt_d, $opt_f, $opt_m, $opt_p, $opt_s, $opt_t);
+our ($opt_a, $opt_d, $opt_f, $opt_h, $opt_m, $opt_p, $opt_s, $opt_t);
 our ($CPU, $OS, $TIME, $MD5);
-getopts('adfmp:s:t');
+getopts('adfhmp:s:t');
 
-my %PROGRAM = (
-	blat => 'blat',    bbmp => 'bbmap',       bow2 => 'bowtie2',
-	bwam => 'bwa',     gem3 => 'gem3-mapper', gmap => 'gmap',
-	hst2 => 'hisat2',  magi => 'magicblast',  min2 => 'minimap2',
-	pblt => 'pblat',   sege => 'segemehl',    star => 'star',
-	subr => 'subread', top2 => 'tophat');
+my @PROGRAM = qw(blat bbmap bowtie2 bwa gem3 gmap hisat2 magicblast minimap2
+	pblat segemehl star subread tophat);
 
 # Environment
+
 my $info = `conda info`;
 die "ERROR: you must install conda\n" if $!;
 my ($active) = $info =~ /active environment : (\S+)/;
@@ -32,13 +29,14 @@ if ($OS eq 'linux') {
 	die "ERROR: unexpected OS: $OS";
 }
 
-my $pckgs = `conda env export`;
+my $packages = `conda env export`;
 my @AVAIL;
-foreach my $abbr (sort keys %PROGRAM) {
-	push @AVAIL, $abbr if $pckgs =~ /\- $PROGRAM{$abbr}/;
+foreach my $program (@PROGRAM) {
+	push @AVAIL, $program if $packages =~ /\- $program=/;
 }
 
 # CLI
+
 my $usage = "
 =============================================================================
 Spliced Alignment Bakeoff Runner
@@ -51,7 +49,7 @@ options:
   -m        perform md5 checksums on data and *.ftx.gz files
   -p <int>  processors [1]
   -s <int>  random seed [unset]
-  -t        testing mode (10% genes, 10% reads sampling)
+  -t        testing mode (sampling: 10% genes, 10% reads)
 
 DNA: path to FASTA file of reference sequence
 FTX: path to FTX file of reference annotation
@@ -64,9 +62,15 @@ examples:
 =============================================================================
 ";
 die $usage unless @ARGV >= 3;
+die $usage if $opt_h;
 my ($src_dna, $src_ftx, $dir, @program) = @ARGV;
+foreach my $program (@program) {
+	die "ERROR: no such program ($program) in known programs (@AVAIL)\n"
+		unless grep(/^$program$/, @AVAIL);
+}
 
 # Setup
+
 my $BASE = getcwd();
 my $dna = "genome.fa";
 my $ftx = "genome.ftx";
@@ -87,6 +91,7 @@ if (not -d $dir or $opt_f) {
 }
 
 # Align
+
 chdir $dir;
 foreach my $prog (@program) {
 	my $cli = "$TIME $runalign $dna $rna";
@@ -98,6 +103,7 @@ foreach my $prog (@program) {
 }
 
 # Checksum
+
 if ($opt_m) {
 	my @file = ($dna, $ftx, $rna);
 	foreach my $prog (@program) {push @file, "$prog.ftx.gz"}
@@ -109,4 +115,5 @@ if ($opt_m) {
 }
 
 # Compare, Plot, etc
+
 `python3 $BASE/src/compare-alignments.py .`

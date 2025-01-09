@@ -52,6 +52,7 @@ while True:
 		data[ref][prog] = ali
 
 # Evaluate best alignments and gather summary stats
+
 sumtable = [{}, {}, {}]
 with open(f'{arg.dir}/details.txt', 'w') as details:
 	for rstr in data:
@@ -70,6 +71,7 @@ with open(f'{arg.dir}/details.txt', 'w') as details:
 			t[prog][r] += 1
 
 # Write summary stats
+
 categories = ('match', 'partial', 'wrong', 'unaligned')
 for i, table in enumerate(sumtable):
 	with open(f'{arg.dir}/table{i+1}.tsv', 'w') as fp:

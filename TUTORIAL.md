@@ -10,8 +10,14 @@ steps.
 ```
 git clone https://github.com/KorfLab/spliced-alignment-bakeoff
 cd spliced-alignment-bakeoff
-conda env create -f env.yml
-conda activate bakeoff
+```
+
+The next part depends on which CPU architecture and operating system you have.
+Here are the commands for x86 and Linux.
+
+```
+conda env create -f env/x86-linux.yml
+conda activate bakeoff-x86-linux
 ./bakeoff
 ```
 
@@ -59,19 +65,11 @@ zless build/blat.ftx.gz
 zless build/star.ftx.gz
 ```
 
-Let's look at the 2nd example command line. The `-f` flag forces rewrite. The
+Let's look at the 2nd example command line. The `-f` flag forces overwrite. The
 `-m` flag reports MD5 checksums for the data files and program outputs. The
 cryptic  `> log.txt 2>&1` at the end of the line writes both stdout and stderr
-to a `log.txt` file. You may like to grep that later for BAKEOFF.
+to a `log.txt` file.
 
 ```
 ./bakeoff -fmts1 data/ce01.* build pblat minimap2 > log.txt 2>&1
-grep BAKEOFF log.txt
-```
-
-For a more complete test, examine and then run `test-bakeoff.sh`.
-
-```
-cat test-bakeoff.sh
-sh test-bakeoff.sh
 ```

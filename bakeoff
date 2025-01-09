@@ -8,40 +8,12 @@ our ($opt_a, $opt_d, $opt_f, $opt_m, $opt_p, $opt_s, $opt_t);
 our ($CPU, $OS, $TIME, $MD5);
 getopts('adfmp:s:t');
 
-sub run {
-	my $cli = shift;
-	print STDERR "BAKEOFF $cli\n";
-	$cli = "$TIME $cli";
-	system($cli) == 0 or die;
-}
-
-my $usage = "
-=============================================================================
-Spliced Alignment Bakeoff Runner
-
-usage: $0 [options] <DNA> <FTX> <DIR> [<PROGRAMS...>]
-options:
-  -a        align with parameters optimized for accuracy
-  -d        pass debugging flag (keep temp files)
-  -f        force overwrite of ftx.gz files (not indexes)
-  -m        perform md5 checksums
-  -p <int>  processors [1]
-  -s <int>  random seed [unset]
-  -t        testing mode (data reduction via sampling)
-  -x <str>  architecture [linux-x86] (others under development)
-
-DNA: path to FASTA file of reference sequence
-FTX: path to FTX file of reference annotation
-DIR: output directory
-PROGRAMS: any collection of supported programs
-
-examples:
-  ./bakeoff -ts1 data/ce01.* build blat star
-  ./bakeoff -fmts1 data/ce01.* build blat star > log.txt 2>&1
-=============================================================================
-";
-die $usage unless @ARGV >= 3;
-my ($src_dna, $src_ftx, $dir, @program) = @ARGV;
+my %PROGRAM = (
+	blat => 'blat',    bbmp => 'bbmap',       bow2 => 'bowtie2',
+	bwam => 'bwa',     gem3 => 'gem3-mapper', gmap => 'gmap',
+	hst2 => 'hisat2',  magi => 'magicblast',  min2 => 'minimap2',
+	pblt => 'pblat',   sege => 'segemehl',    star => 'star',
+	subr => 'subread', top2 => 'tophat');
 
 # Environment
 my $info = `conda info`;
@@ -49,6 +21,7 @@ die "ERROR: you must install conda\n" if $!;
 my ($active) = $info =~ /active environment : (\S+)/;
 if ($active =~ /(\S+)\-(\S+)/) {($CPU, $OS) = ($1, $2)}
 else {die "ERROR: you must activate a bakeoff environment\n"}
+
 if ($OS eq 'linux') {
 	$TIME = '/usr/bin/time -v';
 	$MD5 = 'md5sum';
@@ -58,6 +31,40 @@ if ($OS eq 'linux') {
 } else {
 	die "ERROR: unexpected OS: $OS";
 }
+
+my $pckgs = `conda env export`;
+my @AVAIL;
+foreach my $abbr (sort keys %PROGRAM) {
+	push @AVAIL, $abbr if $pckgs =~ /\- $PROGRAM{$abbr}/;
+}
+
+# CLI
+my $usage = "
+=============================================================================
+Spliced Alignment Bakeoff Runner
+
+usage: $0 [options] <DNA> <FTX> <DIR> [<PROGRAMS...>]
+options:
+  -a        align with parameters optimized for accuracy
+  -d        pass debugging flag (keep temp files)
+  -f        force overwrite if files already exist (normally skipped)
+  -m        perform md5 checksums on data and *.ftx.gz files
+  -p <int>  processors [1]
+  -s <int>  random seed [unset]
+  -t        testing mode (10% genes, 10% reads sampling)
+
+DNA: path to FASTA file of reference sequence
+FTX: path to FTX file of reference annotation
+DIR: output directory
+PROGRAMS: @AVAIL
+
+examples:
+  ./bakeoff -ts1 data/ce01.* build blat star
+  ./bakeoff -fmts1 data/ce01.* build blat star > log.txt 2>&1
+=============================================================================
+";
+die $usage unless @ARGV >= 3;
+my ($src_dna, $src_ftx, $dir, @program) = @ARGV;
 
 # Setup
 my $BASE = getcwd();
@@ -82,11 +89,12 @@ if (not -d $dir or $opt_f) {
 # Align
 chdir $dir;
 foreach my $prog (@program) {
-	my $cli = "$runalign $dna $rna $prog ";
+	my $cli = "$TIME $runalign $dna $rna";
 	$cli .= " --accurate" if $opt_a;
 	$cli .= " --threads $opt_p" if $opt_p;
 	$cli .= " --debug" if $opt_d;
-	run($cli) if not -s "$prog.ftx.gz" or $opt_f;
+	$cli .= " $prog";
+	`$cli` unless -s "$prog.ftx.gz" and not $opt_f;
 }
 
 # Checksum
@@ -101,3 +109,4 @@ if ($opt_m) {
 }
 
 # Compare, Plot, etc
+`python3 $BASE/src/compare-alignments.py .`

@@ -2,13 +2,10 @@ import argparse
 import gzip
 import os
 import sys
-import time
 
 from toolbox import FTX, sam_to_ftx, readfasta
 
 def run(cli):
-	#cli = '/usr/bin/time -f "BAKEOFF TIME %M %U %S %E" ' + cli
-	#cli = 'busybox time -v ' + cli
 	print(cli, file=sys.stderr)
 	os.system(cli)
 
@@ -93,7 +90,6 @@ if arg.accurate: sys.exit('--accurate not implemented yet')
 
 out = f'tmp-{arg.program}' # temporary output file
 ftx = f'ftx-{arg.program}' # temporary ftx file
-t0 = time.time()
 
 if arg.program == 'blat':
 	run(f'blat {arg.genome} {arg.reads} {out} -out=sim4')
@@ -154,9 +150,6 @@ elif arg.program == 'top2':
 	samfile_to_ftxfile(out, ftx)
 else:
 	sys.exit(f'ERROR: unknown program: {arg.program}')
-
-elapsed = time.time() - t0
-print(f'BAKEOFF ELAPSED {arg.program}: {elapsed}', file=sys.stderr)
 
 #####################
 # Report Alignments #

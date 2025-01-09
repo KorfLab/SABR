@@ -16,7 +16,7 @@ Running outside this environment may take some adjustments.
 
 1. Install conda (e.g. Miniforge3)
 2. Clone this repo
-3. Create the conda environment from `env.yml`
+3. Create conda environment
 4. Run the demos in the `bakeoff` usage statement
 
 See the `TUTORIAL.md` for a step-by-step walkthrough.
@@ -27,8 +27,8 @@ See the `TUTORIAL.md` for a step-by-step walkthrough.
 - `TUTORIAL.md` a quick walk-through to check that things work
 - `INFO.md` some behind-the-scenes information
 - `NOTES.md` random stuff the devs are thinking about or working on
-- `env.yml` conda environment
 - `bakeoff` top-level program for running a bakeoff
+- `env/` directory of conda environments for different platforms
 - `data/` directory with some sample files (1% of favorite genomes)
 - `src/` directory with programs that run various parts of the bakeoff
 - `2025/` directory with specifics for the 2025 study

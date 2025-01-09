@@ -54,20 +54,19 @@ options:
 DNA: path to FASTA file of reference sequence
 FTX: path to FTX file of reference annotation
 DIR: output directory
-PROGRAMS: @AVAIL
+PROGRAMS: __all__ or any mixture of the following: @AVAIL
 
 examples:
   ./bakeoff -ts1 data/ce01.* build blat star
   ./bakeoff -fmts1 data/ce01.* build blat star > log.txt 2>&1
+  ./bakeoff -fmts1 data/ce01.* build __all__ > log.txt 2>&1
 =============================================================================
 ";
 die $usage unless @ARGV >= 3;
 die $usage if $opt_h;
 my ($src_dna, $src_ftx, $dir, @program) = @ARGV;
-foreach my $program (@program) {
-	die "ERROR: no such program ($program) in known programs (@AVAIL)\n"
-		unless grep(/^$program$/, @AVAIL);
-}
+if ($program[0] eq '__all__') {@program = @AVAIL}
+else {for my $p (@program) {die "ERROR: $p?\n" unless grep(/^$p$/, @AVAIL)}}
 
 # Setup
 
@@ -110,7 +109,7 @@ if ($opt_m) {
 	foreach my $f (@file) {
 		my $out = ($f =~ /\.gz$/)  ? `gunzip -c $f | $MD5` : `cat $f | $MD5`;
 		my ($md5) = split(/\s+/, $out);
-		print "BAKEOFF MD5 $f: $md5\n";
+		print "MD5 $f: $md5\n";
 	}
 }
 

@@ -21,7 +21,7 @@ conda activate bakeoff-x86-linux
 ./bakeoff
 ```
 
-The `bakeoff` usage statement provides 2 example command lines. We are going to
+The `bakeoff` usage statement provides 3 example command lines. We are going to
 use those. But first, some explanations.
 
 ## Genome Data ##
@@ -73,3 +73,6 @@ to a `log.txt` file.
 ```
 ./bakeoff -fmts1 data/ce01.* build pblat minimap2 > log.txt 2>&1
 ```
+
+The 3rd example uses a special filename `__all__` to run all of the programs
+available in the environment.

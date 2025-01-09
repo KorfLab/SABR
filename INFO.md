@@ -10,9 +10,10 @@ intended to be used outside this study.
 - file extension: `.ftx` (not an official file extension)
 - field delimiter: `|`
 - 5 fields
+- no spaces in fields 1-4
 
 1. chromosome identifier
-2. name of transcript
+2. name of gene/transcript/read/whatever
 3. strand indicator `+` or `-`
 4. exon structure:
 	- hyphen separated coordinates
@@ -109,7 +110,8 @@ the GT-AG rule.
 
 Passing the `--double`` flag creates genes on both strands and the
 `--noncanonical` flag creates introns with additional splice sites: GC-AG,
-AT-AC, and AA-TT (this last one is used to represent 'other').
+AT-AC, and AA-TT (AA-TT is used to represent _other_ not an acutal splice
+site).
 
 The `read-simulator.py` program generates reads along the entire length of a
 gene's mRNA. The `--double` flag creates reads from both strands.

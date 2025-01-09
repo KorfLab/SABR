@@ -8,15 +8,15 @@ our ($opt_a, $opt_d, $opt_f, $opt_h, $opt_m, $opt_p, $opt_s, $opt_t);
 our ($CPU, $OS, $TIME, $MD5);
 getopts('adfhmp:s:t');
 
-my @PROGRAM = qw(blat bbmap bowtie2 bwa gem3 gmap hisat2 magicblast minimap2
-	pblat segemehl star subread tophat);
+my @PROGRAM = qw(blat bbmap bowtie2 bwa gem3-mapper gmap hisat2 magicblast
+	minimap2 pblat segemehl star subread tophat);
 
 # Environment
 
 my $info = `conda info`;
-die "ERROR: you must install conda\n" if $!;
+die "ERROR: conda not installed\n" if $!;
 my ($active) = $info =~ /active environment : (\S+)/;
-if ($active =~ /(\S+)\-(\S+)/) {($CPU, $OS) = ($1, $2)}
+if ($active =~ /bakeoff-(\w+)\-(\w+)/) {($CPU, $OS) = ($1, $2)}
 else {die "ERROR: you must activate a bakeoff environment\n"}
 
 if ($OS eq 'linux') {
@@ -39,12 +39,12 @@ foreach my $program (@PROGRAM) {
 
 my $usage = "
 =============================================================================
-Spliced Alignment Bakeoff Runner
+Spliced Alignment Bakeoff Runner ($CPU-$OS)
 
 usage: $0 [options] <DNA> <FTX> <DIR> [<PROGRAMS...>]
 options:
   -a        align with parameters optimized for accuracy
-  -d        pass debugging flag (keep temp files)
+  -d        debugging: keep temp files
   -f        force overwrite if files already exist (normally skipped)
   -m        perform md5 checksums on data and *.ftx.gz files
   -p <int>  processors [1]
@@ -58,8 +58,8 @@ PROGRAMS: __all__ or any mixture of the following: @AVAIL
 
 examples:
   ./bakeoff -ts1 data/ce01.* build blat star
-  ./bakeoff -fmts1 data/ce01.* build blat star > log.txt 2>&1
-  ./bakeoff -fmts1 data/ce01.* build __all__ > log.txt 2>&1
+  ./bakeoff -fmts1 data/ce01.* build blat star > example.log 2>&1
+  ./bakeoff -fmts1 data/ce01.* build __all__ > example.log 2>&1
 =============================================================================
 ";
 die $usage unless @ARGV >= 3;

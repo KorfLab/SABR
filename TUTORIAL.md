@@ -4,8 +4,7 @@ Tutorial: Spliced Alignment Bakeoff
 ## Installation ##
 
 You must install some flavor of conda. We typically use Miniforge3. After conda
-has been installed and you are in the base environment, you may start the next
-steps.
+has been installed, you may start the next steps.
 
 ```
 git clone https://github.com/KorfLab/spliced-alignment-bakeoff
@@ -22,7 +21,7 @@ conda activate bakeoff-x86-linux
 ```
 
 The `bakeoff` usage statement provides 3 example command lines. We are going to
-use those. But first, some explanations.
+try those. But first, some explanations.
 
 ## Genome Data ##
 
@@ -67,12 +66,16 @@ zless build/star.ftx.gz
 
 Let's look at the 2nd example command line. The `-f` flag forces overwrite. The
 `-m` flag reports MD5 checksums for the data files and program outputs. The
-cryptic  `> log.txt 2>&1` at the end of the line writes both stdout and stderr
-to a `log.txt` file.
+cryptic  `> example.log 2>&1` at the end of the line writes both stdout and
+stderr to a log file.
 
 ```
-./bakeoff -fmts1 data/ce01.* build pblat minimap2 > log.txt 2>&1
+./bakeoff -fmts1 data/ce01.* build blat star > example.txt 2>&1
 ```
 
-The 3rd example uses a special filename `__all__` to run all of the programs
+The 3rd example uses a magic filename `__all__` to run all of the programs
 available in the environment.
+
+```
+./bakeoff -fmts1 data/ce01.* build __all__ > example.log 2>&1
+```

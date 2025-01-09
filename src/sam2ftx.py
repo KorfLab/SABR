@@ -20,7 +20,7 @@ for ftx in sam_to_ftx(arg.sam): print(ftx, file=fp)
 """
 
 This program is only intended for the rare circumstances when a program is run
-outside the normal context. An example is "dragen", which is FPGA-based
+outside the normal bakeoff context. An example is "dragen", which is FPGA-based
 hardware.
 
 """

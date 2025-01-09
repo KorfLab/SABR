@@ -14,12 +14,10 @@ def anti(dna):
 	return dna.translate(COMPLEMENT)[::-1]
 
 def getfp(filename):
-	"""creates file pointers based on file name"""
-	fp = None
-	if   filename.endswith('.gz'): fp = gzip.open(filename, 'rt')
-	elif filename == '-':          fp = sys.stdin
-	else:                          fp = open(filename)
-	return fp
+	"""returns a file pointer for reading based on file name"""
+	if   filename.endswith('.gz'): return gzip.open(filename, 'rt')
+	elif filename == '-':          return sys.stdin
+	else:                          return open(filename)
 
 #############
 # FTX Files #
@@ -104,7 +102,7 @@ class FTX:
 		return '|'.join((self.chrom, self.name, self.strand, estr, self.info))
 
 	def __str__(self):
-		"""the preferred way to print ftx is just to print it"""
+		"""ftx objects can stringify themselves"""
 		return self.text()
 
 	@classmethod

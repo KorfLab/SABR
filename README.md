@@ -1,18 +1,16 @@
 README: Spliced Alignment Bakeoff
 =================================
 
-Aligning RNA-seq reads to their genomic source locations is a surprisingly
+Aligning transcripts to their genomic source locations is a surprisingly
 difficult problem. This project seeks to answer the following questions:
 
-- Which is the most accurate aligner for RNA-seq data?
+- Do aligners fail some simple sanity checks?
+- Which aligner is the most accurate?
+- Which aligner is the most efficient?
 - What kinds of sequence and gene features create the most problems?
 - What improvements can be made in spliced alignment?
-- Do aligners fail some simple sanity checks?
 
 ## Quickstart ##
-
-This project was designed, tested, and executed in an x86-linux environment.
-Running outside this environment may take some adjustments.
 
 1. Install conda (e.g. Miniforge3)
 2. Clone this repo

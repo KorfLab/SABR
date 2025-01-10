@@ -20,11 +20,6 @@ Probably should do the whole thing with both optimized and default parameters.
 - subread
 - tophat
 
-## Real Genome Issues ##
-
-- All regions of transcript-similarity are in paralogy.txt
-- Check for N's in any of the exons. There are none.
-
 ## Sanity checks ##
 
 - version name is the same as reported in conda
@@ -40,8 +35,3 @@ Probably should do the whole thing with both optimized and default parameters.
 - minimap2 sometimes aligns + and - reads differently
 - magicblast changes program names
 - some program is increasing quality values in sam format
-
-
-## Resources ##
-
-Resources usage need automation.

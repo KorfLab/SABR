@@ -35,37 +35,14 @@ Example: Minus-strand transcript with some extra info.
 chr2|gene-2|-|100-200,300-400,500-600|extra free text
 ```
 
-Example: The information field can contain another ftx. A `~` is used to show
-the 2nd ftx. This is used within the bakeoff to attach a genomic source to all
-of its alignments (an aligner may provide more than one alignment).
+Example: The information field can contain another ftx. This is used within the
+bakeoff to attach a genomic source to all of its alignments (an aligner may
+provide more than one alignment). A `~` is often used as a delimiter between
+ftx elements.
 
 ```
 chr1|gene-1|+|100-200,300-400,500-600|~chr1|gene-1|+|100-200,300-400,500-600|
 ```
-
-## Regression Testing ##
-
-To ensure that the genome data and reads are exactly as expected, you might
-want to checksum the bakeoff data files.
-
-```
-./bakeoff -mts1 data/ce01.fa.gz data/ce01.ftx.gz build
-```
-
-| File        | MD5
-|:------------|:---------------------------------
-| genome.fa   | 019858da7aa6fa25a6d8ccf4284688eb
-| genome.ftx  | 0b7ccd51452d8829343ebb8a8b302698
-| reads.fa.gz | bf16185f7da58ced68f4631e37cd78bd
-
-Checksumming the alignments is another issue...
-
-- different versions in different environments
-- parallel processing
-- updated software
-- program reports something different from conda
-- mmap failures on OSX
-- outside of x86-linux, shit isn't going to work
 
 ## Synthetic Genomes & Reads ##
 
@@ -77,9 +54,9 @@ the GT-AG rule.
 ~~~[exon]--intron--[var.exon]--intron--[exon]~~~
 ```
 
-Passing the `--double`` flag creates genes on both strands and the
+Passing the `--double` flag creates genes on both strands and the
 `--noncanonical` flag creates introns with additional splice sites: GC-AG,
-AT-AC, and AA-TT (AA-TT is used to represent _other_ not an acutal splice
+AT-AC, and AA-TT (AA-TT is used to represent _other_ and not an acutal splice
 site).
 
 The `read-simulator.py` program generates reads along the entire length of a

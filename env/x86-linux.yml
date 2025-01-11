@@ -1,4 +1,4 @@
-name: bakeoff-x86-linux
+name: sabr-x86-linux
 channels:
   - conda-forge
   - bioconda

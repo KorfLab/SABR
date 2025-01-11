@@ -1,24 +1,5 @@
-NOTES: Spliced Alignment Bakeoff
-================================
-
-## Contact Authors for Best Parameters ##
-
-Probably should do the whole thing with both optimized and default parameters.
-
-- bbmap
-- blat
-- bowtie2 - doesn't do spliced alignment, no point in contacting
-- bwa - doesn't do spliced alignment, no point in contacting
-- gem3-mapper
-- gmap
-- hisat2
-- magicblast
-- minimap2
-- pblat
-- segemehl
-- star
-- subread
-- tophat
+NOTES: Spliced Alignment Benchmarking Resource
+==============================================
 
 ## Sanity checks ##
 

@@ -1,5 +1,5 @@
-INFO: Spliced Alignment Bakeoff
-===============================
+INFO: Spliced Alignment Benchmarking Resource
+=============================================
 
 ## Flattened Transcript Format ##
 
@@ -35,8 +35,8 @@ Example: Minus-strand transcript with some extra info.
 chr2|gene-2|-|100-200,300-400,500-600|extra free text
 ```
 
-Example: The information field can contain another ftx. This is used within the
-bakeoff to attach a genomic source to all of its alignments (an aligner may
+Example: The information field can contain another ftx. This is used within
+SABR to attach a genomic source to all of its alignments (an aligner may
 provide more than one alignment). A `~` is often used as a delimiter between
 ftx elements.
 

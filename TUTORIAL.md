@@ -1,5 +1,5 @@
-Tutorial: Spliced Alignment Bakeoff
-===================================
+Tutorial: Spliced Alignment Benchmarking Resource
+=================================================
 
 ## Installation ##
 
@@ -7,8 +7,8 @@ You must install some flavor of conda. We typically use Miniforge3. After conda
 has been installed, you may start the next steps.
 
 ```
-git clone https://github.com/KorfLab/spliced-alignment-bakeoff
-cd spliced-alignment-bakeoff
+git clone https://github.com/KorfLab/SABR
+cd SABR
 ```
 
 The next part depends on which CPU architecture and operating system you have.
@@ -16,7 +16,7 @@ Here are the commands for x86 and Linux.
 
 ```
 conda env create -f env/x86-linux.yml
-conda activate bakeoff-x86-linux
+conda activate sabr-x86-linux
 ./bakeoff
 ```
 

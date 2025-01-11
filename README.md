@@ -1,5 +1,5 @@
-README: Spliced Alignment Bakeoff
-=================================
+README: Spliced Alignment Benchmarking Resource
+===============================================
 
 Aligning transcripts to their genomic source locations is a surprisingly
 difficult problem. This project seeks to answer the following questions:
@@ -25,8 +25,8 @@ See the `TUTORIAL.md` for a step-by-step walkthrough.
 - `TUTORIAL.md` a quick walk-through to check that things work
 - `INFO.md` some behind-the-scenes information
 - `NOTES.md` random stuff the devs are thinking about or working on
-- `bakeoff` top-level program for running a bakeoff
+- `bakeoff` top-level program for assessing aligners
 - `env/` directory of conda environments for different platforms
 - `data/` directory with some sample files (1% of favorite genomes)
-- `src/` directory with programs that run various parts of the bakeoff
+- `src/` directory with programs that run various parts of the analyses
 - `2025/` directory with specifics for the 2025 study

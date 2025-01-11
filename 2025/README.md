@@ -1,5 +1,5 @@
-2025 Alignment Bakeoff
-======================
+2025 Alignment Benchmarks
+=========================
 
 Goals
 
@@ -10,6 +10,8 @@ Goals
 
 Future Studies
 
+- Optimal parameters for each program
+- Outdated software
 - Mutated reads
 - Long reads
 - Real reads

@@ -1,4 +1,4 @@
-# toolbox.py - various functions for the spliced alignment bakeoff project
+# toolbox.py - various functions for the SABR project
 
 import gzip
 import re

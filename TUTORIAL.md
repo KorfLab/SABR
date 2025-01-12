@@ -37,7 +37,10 @@ zless data/ce01.fa.gz
 zless data/ce01.ftx.gz
 ```
 
-## Test Bakeoff ##
+## Bakeoff ##
+
+A "bakeoff" is an analysis of alignment programs compared to a reference as
+well as to each other. These are run by the `bakeoff` program.
 
 The `-t` flag puts `bakeoff` into test mode. This samples 10% of the genes and
 10% of the reads. Without the `-t` flag, reads are generated from every gene at

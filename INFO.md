@@ -1,7 +1,7 @@
 INFO: Spliced Alignment Benchmarking Resource
 =============================================
 
-## Flattened Transcript Format ##
+## Flattened Transcript Format (.ftx) ##
 
 This project uses a custom file format to serialize gene structure annotation
 into a single token for embedding in FASTA/FASTQ identifiers. It is not

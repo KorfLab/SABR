@@ -8,11 +8,18 @@ Goals
 - Synthetic reads
 - Synthetic and miniaturized model organism genomes
 
+Probably
+
+- Abandonware
+	- mapsplice
+	- splicemap
+- Dragen
+
 Future Studies
 
 - Optimal parameters for each program
-- Outdated software
 - Mutated reads
+- Reads with ambiguities
 - Long reads
 - Real reads
 - Larger genomes

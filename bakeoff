@@ -16,8 +16,8 @@ my @PROGRAM = qw(bbmap blat bowtie2 bwa gem3-mapper gmap hisat2 magicblast
 my $info = `conda info`;
 die "ERROR: conda not installed\n" if $!;
 my ($active) = $info =~ /active environment : (\S+)/;
-if ($active =~ /bakeoff-(\w+)\-(\w+)/) {($CPU, $OS) = ($1, $2)}
-else {die "ERROR: you must activate a bakeoff environment\n"}
+if ($active =~ /sabr-(\w+)\-(\w+)/) {($CPU, $OS) = ($1, $2)}
+else {die "ERROR: you must activate a sabr environment\n"}
 
 if ($OS eq 'linux') {
 	$TIME = '/usr/bin/time -v';
@@ -38,7 +38,6 @@ foreach my $program (@PROGRAM) {
 # CLI
 
 my $usage = "
-=============================================================================
 Spliced Alignment Bakeoff Runner ($CPU-$OS)
 
 usage: $0 [options] <DNA> <FTX> <DIR> [<PROGRAMS...>]
@@ -60,7 +59,6 @@ examples:
   ./bakeoff -ts1 data/ce01.* build blat star
   ./bakeoff -fmts1 data/ce01.* build blat star > example.log 2>&1
   ./bakeoff -fmts1 data/ce01.* build __all__ > example.log 2>&1
-=============================================================================
 ";
 die $usage unless @ARGV >= 3;
 die $usage if $opt_h;

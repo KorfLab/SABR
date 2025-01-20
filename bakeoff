@@ -114,5 +114,5 @@ if ($opt_m) {
 }
 
 # Compare, Plot, etc
-
+exit if @program == 0;
 system("python3 $BASE/src/compare-alignments.py .") == 0 or die;

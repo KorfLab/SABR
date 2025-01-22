@@ -16,7 +16,7 @@ my @PROGRAM = qw(bbmap blat bowtie2 bwa gem3-mapper gmap hisat2 magicblast
 my $info = `conda info`;
 die "ERROR: conda not installed\n" if $!;
 my ($active) = $info =~ /active environment : (\S+)/;
-if ($active =~ /sabr-(\w+)\-(\w+)/) {($CPU, $OS) = ($1, $2)}
+if ($active =~ /sabr-(\w+)\-(\w+)/) {($OS, $CPU) = ($1, $2)}
 else {die "ERROR: you must activate a sabr environment\n"}
 
 if ($OS eq 'linux') {

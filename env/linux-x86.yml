@@ -1,4 +1,4 @@
-name: sabr-x86-linux
+name: sabr-linux-x86
 channels:
   - conda-forge
   - bioconda

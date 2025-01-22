@@ -1,0 +1,10 @@
+name: sabr-osx-arm64
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bbmap
+  - hisat2
+  - pblat
+  - subread

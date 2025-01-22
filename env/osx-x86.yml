@@ -1,4 +1,4 @@
-name: sabr-x86-osx
+name: sabr-osx-x86
 channels:
   - conda-forge
   - bioconda

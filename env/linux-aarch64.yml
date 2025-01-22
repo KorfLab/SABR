@@ -1,0 +1,7 @@
+name: sabr-linux-aarch64
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bbmap

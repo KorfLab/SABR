@@ -12,11 +12,11 @@ cd SABR
 ```
 
 The next part depends on which CPU architecture and operating system you have.
-Here are the commands for x86 and Linux.
+Here are the commands for Linux and x86.
 
 ```
-conda env create -f env/x86-linux.yml
-conda activate sabr-x86-linux
+conda env create -f env/linux-x86.yml
+conda activate sabr-linux-x86
 ./bakeoff
 ```
 

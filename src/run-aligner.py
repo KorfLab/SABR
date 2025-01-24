@@ -102,7 +102,6 @@ elif arg.program == 'bwa':
 	samfile_to_ftxfile(out, ftx)
 elif arg.program == 'est2genome':
 	run(f'src/est2genome.py -t {arg.threads} {arg.genome} {fasta} > {out}')
-	mspcrunch_to_ftxfile(out, ftx)
 elif arg.program == 'gem3-mapper':
 	if arg.accurate: pass
 	if not os.path.exists(f'{arg.genome}.gem'): run(f'gem-indexer -i {arg.genome} -o {arg.genome}')

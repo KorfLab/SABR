@@ -8,8 +8,8 @@ our ($opt_a, $opt_d, $opt_f, $opt_h, $opt_m, $opt_p, $opt_s, $opt_t);
 our ($CPU, $OS, $TIME, $MD5);
 getopts('adfhmp:s:t');
 
-my @PROGRAM = qw(bbmap blat bowtie2 bwa gem3-mapper gmap hisat2 magicblast
-	minimap2 pblat segemehl star subread tophat);
+my @PROGRAM = qw(bbmap blat bowtie2 bwa est2genome gem3-mapper gmap hisat2
+	magicblast minimap2 pblat segemehl star subread tophat);
 
 # Environment
 

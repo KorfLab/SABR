@@ -5,7 +5,7 @@ channels:
   - defaults
 dependencies:
   - bbmap
-  - blast       # used for indexing magicblast and paralogy studies
+  - blast       # used for magicblast and est-genome
   - blat
   - bowtie2     # used for indexing tophat and no-splice control
   - bwa         # used for no-splice control

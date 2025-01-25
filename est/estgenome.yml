@@ -1,0 +1,8 @@
+name: estgenome
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - blast-legacy
+  - emboss

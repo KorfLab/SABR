@@ -8,8 +8,9 @@ Goals
 - Synthetic reads
 - Synthetic and miniaturized model organism genomes
 
-Probably
+Legacy
 
+- est2genome
 - Abandonware
 	- mapsplice
 	- splicemap

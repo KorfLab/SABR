@@ -49,10 +49,18 @@ if __name__ == '__main__':
 		help='report diagnostic messages')
 	arg = parser.parse_args()
 
-	# PART 1: run blast to match read to chromosomal region
+	# Part 0: setup build directory and copy in files
 	os.system(f'mkdir -p {arg.build}')
-	os.system(f'cp {arg.genome} {arg.build}/genome.fa')
-	os.system(f'gunzip -c {arg.reads} > {arg.build}/reads.fa')
+	if arg.genome.endswith('.gz'):
+		os.system(f'gunzip -c {arg.genome} > {arg.build}/genome.fa')
+	else:
+		os.system(f'cp {arg.genome} {arg.build}/genome.fa')
+	if arg.reads.endswith('.gz'):
+		os.system(f'gunzip -c {arg.reads} > {arg.build}/reads.fa')
+	else:
+		os.system(f'cp {arg.reads} {arg.build}/reads.fa')
+
+	# PART 1: run blast to match read to chromosomal region
 	run(f'cd {arg.build} ; makeblastdb -dbtype nucl -in genome.fa -parse_seqids > /dev/null', arg)
 	run(f'blastn -db {arg.build}/genome.fa -query {arg.build}/reads.fa -outfmt 6 -num_threads {arg.threads} -evalue 1e-10 -dust no > {arg.build}/blastn.txt', arg)
 	glen = {name:len(seq) for name, seq in readfasta(arg.genome)}

@@ -30,3 +30,18 @@ See the `TUTORIAL.md` for a step-by-step walkthrough.
 - `data/` directory with some sample files (1% of favorite genomes)
 - `src/` directory with programs that run various parts of the analyses
 - `2025/` directory with specifics for the 2025 study
+
+## estgenome ##
+
+Testing
+
+```
+conda activate sabr-linux-x86
+python3 src/read-simulator.py data/ce01.fa.gz data/ce01.ftx.gz --seed 1 --samplegene 0.05 --samplereads 0.01 > rtest.fa
+python3 src/est-genome.py data/ce01.fa.gz rtest.fa --verbose
+```
+Runnning
+
+- Remove `--verbose`` flag
+- Add `--threads n` for however many CPUs you are using
+- Remove `temp` directory (it doesn't auto-delete for debugging reasons)
